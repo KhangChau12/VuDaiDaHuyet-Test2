@@ -1,3 +1,5 @@
+// File: src/components/game/Night.jsx - Sửa toàn bộ file
+
 import React, { useEffect, useState } from 'react'
 import "../../styles/home.css"
 
@@ -7,6 +9,7 @@ import { usePlayerContext } from '../../context/PlayerContext'
 import { getNightActionPrompt } from '../../utils/nightSequence'
 import { processDrunkEffects } from '../../utils/statusEffects'
 import { checkAllVictoryConditions } from '../../services/victoryConditions'
+import { getEventByDay } from '../../services/eventManager'
 import PowerTheme from './NightActions/PowerTheme'
 import BaKien from './NightActions/BaKien'
 import LyCuong from './NightActions/LyCuong'
@@ -49,17 +52,19 @@ function Night({ date, onEnd }) {
     }
   }, [players]);
   
-  // Khởi tạo thứ tự gọi nhân vật ban đêm sau khi xử lý say rượu
+  // Kiểm tra xem đêm hiện tại có phải là đêm trước ngày Chợ Phiên không
   useEffect(() => {
-    const alivePlayers = players.filter(p => p.alive);
+    // Lấy sự kiện của ngày tiếp theo
+    const nextDayEvent = getEventByDay(date + 1);
     
-    // Nếu hôm sau là ngày Chợ Phiên, hiện Chợ Đen
-    if (currentEvent === 'market' && !showBlackMarket) {
+    // Nếu ngày tiếp theo là ngày Chợ Phiên, hiện Chợ Đen
+    if (nextDayEvent === 'market' && !showBlackMarket) {
       setShowBlackMarket(true);
       return;
     }
     
     // Xử lý trạng thái say rượu trước
+    const alivePlayers = players.filter(p => p.alive);
     const drunkPlayerIds = processDrunkEffects(alivePlayers, unsetDrunk);
     if (drunkPlayerIds.length > 0 && !showDrunkEffects) {
       setShowDrunkEffects(true);

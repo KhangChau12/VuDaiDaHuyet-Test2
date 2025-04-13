@@ -548,3 +548,20 @@
   background-color: rgba(244, 67, 54, 0.3);
   color: #f44336;
 }
+
+.current-coins-display {
+  background-color: rgba(207, 175, 119, 0.3);
+  border-radius: 10px;
+  padding: 10px;
+  margin: 10px 0 15px 0;
+  text-align: center;
+}
+
+.current-coins-display p {
+  margin: 0;
+}
+
+.current-coins-display strong {
+  color: #e0c487;
+  font-size: 18px;
+}

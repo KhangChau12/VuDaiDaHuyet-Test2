@@ -1,3 +1,5 @@
+// File: src/components/game/Day.jsx - Sửa toàn bộ file
+
 import React, { useEffect, useState, useRef } from 'react'
 import "../../styles/home.css"
 import "../../styles/form.css"
@@ -7,9 +9,6 @@ import Card from '../player/Card';
 import PlayerMenu from '../player/PlayerMenu';
 import { useGameContext } from '../../context/GameContext';
 import { usePlayerContext } from '../../context/PlayerContext';
-import MarketDay from './Events/MarketDay';
-import HarvestDay from './Events/HarvestDay';
-import WineParty from './Events/WineParty';
 import Execution from './Events/Execution';
 import { checkAllVictoryConditions } from '../../services/victoryConditions';
 
@@ -25,7 +24,7 @@ function Day({ date, onEnd }) {
 
   const [filterTeam, setFilterTeam] = useState('all');
   const [playerToSee, setPlayerToSee] = useState(null);
-  const [showEvent, setShowEvent] = useState(false);
+  const [showExecution, setShowExecution] = useState(false);
   const [eventMessages, setEventMessages] = useState([]);
 
   // Kiểm tra điều kiện chiến thắng
@@ -62,17 +61,19 @@ function Day({ date, onEnd }) {
   useEffect(() => {
     // Xử lý sự kiện khi chuyển sang ngày mới
     if (currentEvent === 'harvest') {
-      setEventMessages(['Ngày Thu Hoạch: Phe Công Lý và Lang Thang nhận 2 đồng, phe Quyền Thế nhận 1 đồng.']);
+      setEventMessages([...eventMessages, 'Ngày Thu Hoạch: Phe Công Lý và Lang Thang nhận 2 đồng, phe Quyền Thế nhận 1 đồng.']);
     } else if (currentEvent === 'market') {
-      setEventMessages(['Ngày Chợ Phiên: Mọi người có thể mua thẻ Hành Động.']);
+      setEventMessages([...eventMessages, 'Ngày Chợ Phiên: Mọi người có thể mua thẻ Hành Động từ Menu của nhân vật.']);
     } else if (currentEvent === 'wine') {
-      setEventMessages(['Tiệc Rượu: 3 người ngẫu nhiên sẽ nhận thẻ Say Rượu.']);
+      setEventMessages([...eventMessages, 'Tiệc Rượu: 3 người ngẫu nhiên sẽ nhận thẻ Say Rượu.']);
     }
     
-    // Hiển thị component sự kiện sau một khoảng thời gian
-    setTimeout(() => {
-      setShowEvent(true);
-    }, 2000);
+    // Hiển thị execution phase sau một khoảng thời gian nếu cần
+    if (executionPhase.canExecute) {
+      setTimeout(() => {
+        setShowExecution(true);
+      }, 3000);
+    }
   }, [currentEvent]);
 
   // Function to filter players by team
@@ -103,30 +104,11 @@ function Day({ date, onEnd }) {
 
   // Function to handle event completion
   const handleEventComplete = (messages) => {
-    setShowEvent(false);
+    setShowExecution(false);
     if (messages) {
       setEventMessages([...eventMessages, ...messages]);
     }
   };
-
-  // Render appropriate event component
-  const renderEventComponent = () => {
-    if (!showEvent) return null;
-
-    switch (currentEvent) {
-      case 'market':
-        return <MarketDay onComplete={handleEventComplete} />;
-      case 'harvest':
-        return <HarvestDay onComplete={handleEventComplete} />;
-      case 'wine':
-        return <WineParty onComplete={handleEventComplete} />;
-      default:
-        return null;
-    }
-  };
-
-  // Check if execution phase should be shown
-  const shouldShowExecution = executionPhase.canExecute && !showEvent;
 
   // Hàm xử lý menu nhân vật
   const handlePlayerCardClick = (player) => {
@@ -248,18 +230,15 @@ function Day({ date, onEnd }) {
         </div>
       }
 
-      {/* Event overlay */}
-      {renderEventComponent()}
-
       {/* Execution component */}
-      {shouldShowExecution && <Execution onComplete={handleEventComplete} />}
+      {showExecution && <Execution onComplete={handleEventComplete} />}
 
       {/* Game controls */}
       <div className="day-controls" ref={dayRef}>
         <button
           className="next-phase-btn"
           onClick={onEnd}
-          disabled={showEvent || shouldShowExecution}
+          disabled={showExecution}
         >
           Bắt đầu đêm {date + 1}
         </button>

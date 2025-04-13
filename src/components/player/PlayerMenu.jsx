@@ -1,3 +1,5 @@
+// File: src/components/player/PlayerMenu.jsx - Phần liên quan đến shop
+
 import React, { useEffect, useState } from 'react'
 import "../../styles/menu.css"
 import CardMenu from './CardMenu';
@@ -24,11 +26,22 @@ function PlayerMenu(props) {
   const [useResult, setUseResult] = useState(null);
   const [buySuccess, setBuySuccess] = useState(null);
   
+  // State để lưu thông tin người chơi hiện tại (và cập nhật khi mua đồ)
+  const [currentPlayer, setCurrentPlayer] = useState(props.player);
+  
+  // Effect để cập nhật currentPlayer khi props.player thay đổi
+  useEffect(() => {
+    setCurrentPlayer(props.player);
+  }, [props.player]);
+  
+  // Tìm thông tin người chơi hiện tại từ players array (luôn cập nhật)
+  const updatedPlayer = players.find(p => p.id === props.player.id);
+  
   // Lấy thông tin giá các thẻ
   const price = ITEM_PRICES;
   
   // Lấy danh sách vật phẩm đã sở hữu
-  const itemOwned = props.player.items;
+  const itemOwned = updatedPlayer.items;
   
   // Kiểm tra xem có thể mua hàng không (chỉ trong ngày Chợ Phiên)
   const canBuy = currentEvent === 'market';
@@ -44,9 +57,11 @@ function PlayerMenu(props) {
   
   // Hàm mua thẻ
   const buy = (item) => {
-    if (props.player.coins >= price[item]) {
-      removeCoins(props.player.id, price[item]);
-      addItem(props.player.id, item);
+    if (updatedPlayer.coins >= price[item]) {
+      removeCoins(updatedPlayer.id, price[item]);
+      addItem(updatedPlayer.id, item);
+      
+      // Hiển thị thông báo thành công
       setBuySuccess({
         success: true,
         item: item,
@@ -58,6 +73,7 @@ function PlayerMenu(props) {
         setBuySuccess(null);
       }, 2000);
     } else {
+      // Hiển thị thông báo thất bại
       setBuySuccess({
         success: false,
         item: item,
@@ -92,7 +108,7 @@ function PlayerMenu(props) {
         // Đặt thẻ Say Rượu
         if (targetPlayer.alive && !targetPlayer.drunk) {
           setDrunk(targetPlayer.id);
-          removeItem(props.player.id, 'Rượu Đế');
+          removeItem(updatedPlayer.id, 'Rượu Đế');
           setUseResult({ success: true, message: `Đã đặt thẻ Say Rượu lên ${targetPlayer.name}.` });
         } else {
           setUseResult({ success: false, message: 'Không thể đặt thẻ Say Rượu lên người này.' });
@@ -103,7 +119,7 @@ function PlayerMenu(props) {
         // Loại bỏ thẻ Say Rượu
         if (targetPlayer.alive && targetPlayer.drunk) {
           unsetDrunk(targetPlayer.id);
-          removeItem(props.player.id, 'Cháo Hành');
+          removeItem(updatedPlayer.id, 'Cháo Hành');
           setUseResult({ success: true, message: `Đã loại bỏ thẻ Say Rượu khỏi ${targetPlayer.name}.` });
         } else {
           setUseResult({ success: false, message: 'Không thể loại bỏ thẻ Say Rượu của người này.' });
@@ -114,7 +130,7 @@ function PlayerMenu(props) {
         // Hóa giải ép buộc
         if (targetPlayer.alive && targetPlayer.shutup) {
           unsetMuted(targetPlayer.id);
-          removeItem(props.player.id, 'Giải Ách');
+          removeItem(updatedPlayer.id, 'Giải Ách');
           setUseResult({ success: true, message: `Đã giải thoát ${targetPlayer.name} khỏi ép buộc.` });
         } else {
           setUseResult({ success: false, message: 'Không thể giải ách cho người này.' });
@@ -125,7 +141,7 @@ function PlayerMenu(props) {
         // Gọi người đã chết trở về làng
         if (!targetPlayer.alive) {
           revivePlayer(targetPlayer.id);
-          removeItem(props.player.id, 'Hồi Hương');
+          removeItem(updatedPlayer.id, 'Hồi Hương');
           setUseResult({ success: true, message: `Đã gọi ${targetPlayer.name} trở về làng.` });
         } else {
           setUseResult({ success: false, message: 'Không thể gọi người này trở về làng.' });
@@ -203,24 +219,24 @@ function PlayerMenu(props) {
       </div>
       
       <div className='info'>
-        <CardMenu player={props.player}></CardMenu>
+        <CardMenu player={updatedPlayer}></CardMenu>
       </div>
       
       {/* Tab nội dung */}
       {activeTab === 'info' && (
         <div className='player-details'>
           <h3 className="thong-tin-chi-tiet">Thông tin chi tiết</h3>
-          <p><strong>Tên:</strong> {props.player.name}</p>
-          <p><strong>Vai trò:</strong> {props.player.role}</p>
-          <p><strong>Phe:</strong> {props.player.team}</p>
-          <p><strong>Tiền:</strong> {props.player.coins} đồng</p>
-          <p><strong>Điểm uất ức:</strong> {props.player.frustration}</p>
-          <p><strong>Điểm rượu:</strong> {props.player.wine}</p>
+          <p><strong>Tên:</strong> {updatedPlayer.name}</p>
+          <p><strong>Vai trò:</strong> {updatedPlayer.role}</p>
+          <p><strong>Phe:</strong> {updatedPlayer.team}</p>
+          <p><strong>Tiền:</strong> {updatedPlayer.coins} đồng</p>
+          <p><strong>Điểm uất ức:</strong> {updatedPlayer.frustration}</p>
+          <p><strong>Điểm rượu:</strong> {updatedPlayer.wine}</p>
           <p><strong>Trạng thái:</strong></p>
           <ul>
-            {props.player.drunk && <li>Đang say rượu</li>}
-            {props.player.shutup && <li>Đang bị ép buộc</li>}
-            {!props.player.drunk && !props.player.shutup && <li>Bình thường</li>}
+            {updatedPlayer.drunk && <li>Đang say rượu</li>}
+            {updatedPlayer.shutup && <li>Đang bị ép buộc</li>}
+            {!updatedPlayer.drunk && !updatedPlayer.shutup && <li>Bình thường</li>}
           </ul>
         </div>
       )}
@@ -295,6 +311,10 @@ function PlayerMenu(props) {
             <div className='shop-container'>
               <h3>Cửa hàng</h3>
               
+              <div className="current-coins-display">
+                <p>Số tiền hiện có: <strong>{updatedPlayer.coins} đồng</strong></p>
+              </div>
+              
               {buySuccess && (
                 <div className={`buy-message ${buySuccess.success ? 'success' : 'error'}`}>
                   {buySuccess.success 
@@ -307,9 +327,9 @@ function PlayerMenu(props) {
                 <div className='shop-row'>
                   {items.slice(0, 3).map(item => (
                     <div 
-                      className={`shop-item ${props.player.coins < item.price ? 'disabled' : ''}`} 
+                      className={`shop-item ${updatedPlayer.coins < item.price ? 'disabled' : ''}`} 
                       key={item.id}
-                      onClick={() => buy(item.id)}
+                      onClick={() => updatedPlayer.coins >= item.price && buy(item.id)}
                     >
                       <div className="shop-item-image">
                         <img src={item.image} alt={item.name} />
@@ -320,7 +340,7 @@ function PlayerMenu(props) {
                       <div className="item-count">Đang sở hữu: {itemOwned[item.id] || 0}</div>
                       <button 
                         className="buy-button"
-                        disabled={props.player.coins < item.price}
+                        disabled={updatedPlayer.coins < item.price}
                       >
                         Mua
                       </button>
@@ -330,9 +350,9 @@ function PlayerMenu(props) {
                 <div className='shop-row'>
                   {items.slice(3).map(item => (
                     <div 
-                      className={`shop-item ${props.player.coins < item.price ? 'disabled' : ''}`} 
+                      className={`shop-item ${updatedPlayer.coins < item.price ? 'disabled' : ''}`} 
                       key={item.id}
-                      onClick={() => buy(item.id)}
+                      onClick={() => updatedPlayer.coins >= item.price && buy(item.id)}
                     >
                       <div className="shop-item-image">
                         <img src={item.image} alt={item.name} />
@@ -343,7 +363,7 @@ function PlayerMenu(props) {
                       <div className="item-count">Đang sở hữu: {itemOwned[item.id] || 0}</div>
                       <button 
                         className="buy-button"
-                        disabled={props.player.coins < item.price}
+                        disabled={updatedPlayer.coins < item.price}
                       >
                         Mua
                       </button>
@@ -362,7 +382,7 @@ function PlayerMenu(props) {
       )}
       
       {activeTab === 'trade' && (
-        <Trade player={props.player} back={() => setActiveTab('info')} />
+        <Trade player={updatedPlayer} back={() => setActiveTab('info')} />
       )}
       
       {/* Nút quay lại */}
