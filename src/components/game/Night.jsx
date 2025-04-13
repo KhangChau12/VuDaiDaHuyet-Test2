@@ -362,7 +362,7 @@ function Night({ date, onEnd }) {
       
       {showTitle && (
         <div id='title' style={{ opacity: showTitle ? 1 : 0, transition: 'opacity 1s' }}>
-          <h2>ĐÊM {date}</h2>
+          <h2>ĐÊM {date + 1}</h2>
         </div>
       )}
       
