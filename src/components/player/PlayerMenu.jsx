@@ -4,6 +4,7 @@ import CardMenu from './CardMenu';
 import { usePlayerContext } from '../../context/PlayerContext';
 import { useGameContext } from '../../context/GameContext';
 import { ITEM_PRICES } from '../../utils/gameHelpers';
+import Trade from './Trade'; // Thêm import này để fix lỗi
 
 // Import assets
 import background from "../../assets/background_day.png";
@@ -281,6 +282,7 @@ function PlayerMenu(props) {
           )}
         </div>
       )}
+      
       {activeTab === 'trade' && (
         <Trade player={props.player} back={() => setActiveTab('info')} />
       )}
