@@ -335,6 +335,7 @@ function Night({ date, onEnd }) {
     const RoleComponent = roleComponents[currentRole];
     
     if (RoleComponent) {
+      console.log(players);
       return <RoleComponent onAction={handleRoleAction} />;
     }
     

@@ -92,7 +92,7 @@ function Trade({ player, back }) {
           <h3>Trao tiền:</h3>
           <p>Số dư hiện tại: {player.coins} đồng</p>
           <div className="amount-control">
-            <label>Số tiền muốn trao:</label>
+            <label style={{color: 'var(--brown-text)'}}>Số tiền muốn trao:</label>
             <input 
               type="number" 
               min="1" 

@@ -295,7 +295,7 @@
   
   /* Event messages */
   .event-messages {
-    background-color: rgba(207, 175, 119, 0.2);
+    background-color: rgba(255, 206, 121, 0.6);
     border-radius: 10px;
     padding: 10px 15px;
     margin: 10px 0 20px 0;
@@ -304,4 +304,5 @@
   .event-messages p {
     margin: 5px 0;
     font-size: 14px;
+    color: var(--brown-menu);
   }
