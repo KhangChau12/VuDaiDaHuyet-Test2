@@ -36,13 +36,23 @@ function Night({ date, onEnd }) {
     setGameOver 
   } = useGameContext();
   
-  const { players, unsetDrunk } = usePlayerContext();
+  const { 
+    players, 
+    unsetDrunk, 
+    increaseFrustration, 
+    decreaseFrustration,
+    removeCoins,
+    addCoins,
+    removePlayer,
+    setMuted
+  } = usePlayerContext();
   
   const [showTitle, setShowTitle] = useState(true);
   const [animationComplete, setAnimationComplete] = useState(false);
   const [showDrunkEffects, setShowDrunkEffects] = useState(false);
   const [showBlackMarket, setShowBlackMarket] = useState(false);
   const [nightMessages, setNightMessages] = useState([]);
+  const [actionsProcessed, setActionsProcessed] = useState(false);
   
   // Kiểm tra điều kiện chiến thắng
   useEffect(() => {
@@ -74,6 +84,15 @@ function Night({ date, onEnd }) {
     // Khởi tạo thứ tự gọi nhân vật
     initNightSequence(alivePlayers);
   }, [showBlackMarket, showDrunkEffects]);
+
+  // Xử lý các hành động đêm khi kết thúc tất cả các lượt
+  useEffect(() => {
+    // Chỉ xử lý khi tất cả nhân vật đã hành động và chưa xử lý các hành động
+    if (!nightPhase.currentRole && nightPhase.actions && Object.keys(nightPhase.actions).length > 0 && !actionsProcessed) {
+      processNightActions();
+      setActionsProcessed(true);
+    }
+  }, [nightPhase.currentRole, nightPhase.actions]);
   
   // Animation cho title
   useEffect(() => {
@@ -84,6 +103,161 @@ function Night({ date, onEnd }) {
       }, 1000);
     }, 1000);
   }, []);
+  
+  // Xử lý các hành động đêm
+  const processNightActions = () => {
+    const { actions } = nightPhase;
+    const messages = [];
+    
+    // Tìm người được Lão Hạc bảo vệ
+    const protectedPlayerId = actions['Lão Hạc']?.targetId;
+    
+    // Xử lý đàn áp từ phe Quyền Thế
+    if (actions['PowerTheme']?.type === 'oppress') {
+      const targetId = actions['PowerTheme'].targetId;
+      const targetPlayer = players.find(p => p.id === targetId);
+      
+      if (targetPlayer && targetId !== protectedPlayerId) {
+        increaseFrustration(targetId, 1);
+        messages.push(`${targetPlayer.name} bị đàn áp bởi phe Quyền Thế và tăng 1 điểm uất ức.`);
+      } else if (targetPlayer && targetId === protectedPlayerId) {
+        messages.push(`${targetPlayer.name} được Lão Hạc bảo vệ khỏi đàn áp.`);
+      }
+    }
+    
+    // Xử lý đàn áp từ Bá Kiến
+    if (actions['Bá Kiến']?.type === 'oppress') {
+      const targetId = actions['Bá Kiến'].targetId;
+      const targetPlayer = players.find(p => p.id === targetId);
+      
+      if (targetPlayer && targetId !== protectedPlayerId) {
+        increaseFrustration(targetId, 1);
+        messages.push(`${targetPlayer.name} bị đàn áp bởi Bá Kiến và tăng 1 điểm uất ức.`);
+      } else if (targetPlayer && targetId === protectedPlayerId) {
+        messages.push(`${targetPlayer.name} được Lão Hạc bảo vệ khỏi đàn áp.`);
+      }
+    }
+    
+    // Xử lý tống tiền từ Lý Cường
+    if (actions['Lý Cường']?.type === 'extort') {
+      const targetIds = actions['Lý Cường'].targetIds || [];
+      let totalExtortedMoney = 0;
+      
+      targetIds.forEach(targetId => {
+        const targetPlayer = players.find(p => p.id === targetId);
+        if (targetPlayer && targetPlayer.coins > 0) {
+          removeCoins(targetId, 1);
+          totalExtortedMoney += 1;
+          messages.push(`${targetPlayer.name} bị Lý Cường tống tiền 1 đồng.`);
+        }
+      });
+      
+      // Phân chia tiền cho phe Quyền Thế
+      if (totalExtortedMoney > 0) {
+        const powerThemeMembers = players.filter(p => p.team === 'Quyền Thế' && p.alive);
+        const sharePerMember = Math.floor(totalExtortedMoney / powerThemeMembers.length);
+        const remainder = totalExtortedMoney % powerThemeMembers.length;
+        
+        powerThemeMembers.forEach((member, index) => {
+          const share = index < remainder ? sharePerMember + 1 : sharePerMember;
+          if (share > 0) {
+            addCoins(member.id, share);
+          }
+        });
+        
+        messages.push(`Phe Quyền Thế nhận được ${totalExtortedMoney} đồng từ tống tiền.`);
+      }
+    }
+    
+    // Xử lý giúp đỡ từ Thị Nở
+    if (actions['Thị Nở']?.type === 'help') {
+      const targetId = actions['Thị Nở'].targetId;
+      const targetPlayer = players.find(p => p.id === targetId);
+      
+      if (targetPlayer && targetPlayer.frustration > 0) {
+        decreaseFrustration(targetId, 1);
+        messages.push(`${targetPlayer.name} được Thị Nở giúp đỡ giảm 1 điểm uất ức.`);
+      }
+    }
+    
+    // Xử lý ép buộc từ Đội Tảo
+    if (actions['Đội Tảo']?.type === 'force') {
+      const targetId = actions['Đội Tảo'].targetId;
+      const targetPlayer = players.find(p => p.id === targetId);
+      
+      if (targetPlayer && !targetPlayer.shutup) {
+        setMuted(targetId);
+        messages.push(`${targetPlayer.name} bị Đội Tảo ép buộc.`);
+      }
+    }
+    
+    // Xử lý thanh trừng từ Đội Tảo
+    if (actions['Đội Tảo']?.type === 'kill') {
+      const targetId = actions['Đội Tảo'].targetId;
+      const targetPlayer = players.find(p => p.id === targetId);
+      
+      if (targetPlayer) {
+        removePlayer(targetId);
+        messages.push(`${targetPlayer.name} bị Đội Tảo thanh trừng và rời khỏi làng.`);
+      }
+    }
+    
+    // Xử lý tấn công từ Chí Phèo
+    if (actions['Chí Phèo']?.type === 'attack') {
+      const targetId = actions['Chí Phèo'].targetId;
+      const targetPlayer = players.find(p => p.id === targetId);
+      
+      if (targetPlayer) {
+        removePlayer(targetId);
+        messages.push(`${targetPlayer.name} bị Chí Phèo tấn công và rời khỏi làng.`);
+      }
+    }
+    
+    // Xử lý cướp tiền từ Năm Thọ
+    if (actions['Năm Thọ']?.type === 'rob') {
+      const targetId = actions['Năm Thọ'].targetId;
+      const targetPlayer = players.find(p => p.id === targetId);
+      const namTho = players.find(p => p.role === 'Năm Thọ');
+      
+      if (targetPlayer && targetPlayer.role === 'Bá Kiến') {
+        // Nếu cướp nhầm Bá Kiến
+        if (namTho) {
+          removePlayer(namTho.id);
+          messages.push(`Năm Thọ cướp nhầm nhà Bá Kiến và phải rời khỏi làng.`);
+        }
+      } else if (targetPlayer) {
+        // Cướp thành công
+        const amountToRob = Math.min(targetPlayer.coins, 3);
+        if (amountToRob > 0) {
+          removeCoins(targetId, amountToRob);
+          if (namTho) {
+            addCoins(namTho.id, amountToRob);
+          }
+          messages.push(`${targetPlayer.name} bị Năm Thọ cướp ${amountToRob} đồng.`);
+        }
+      }
+    }
+    
+    // Xử lý bán rượu từ Tự Lãng
+    if (actions['Tự Lãng']?.type === 'sell') {
+      const targetId = actions['Tự Lãng'].targetId;
+      const targetPlayer = players.find(p => p.id === targetId);
+      const tuLang = players.find(p => p.role === 'Tự Lãng');
+      
+      if (targetPlayer && targetPlayer.coins > 0) {
+        removeCoins(targetId, 1);
+        if (tuLang) {
+          addCoins(tuLang.id, 1);
+        }
+        messages.push(`${targetPlayer.name} mua rượu từ Tự Lãng.`);
+      }
+    }
+    
+    // Cập nhật tin nhắn đêm
+    if (messages.length > 0) {
+      setNightMessages(prev => [...prev, ...messages]);
+    }
+  };
   
   // Xử lý hoàn thành Chợ Đen
   const handleBlackMarketComplete = (messages) => {
