@@ -1,4 +1,6 @@
 import React, { createContext, useReducer, useContext } from 'react';
+import { getEventByDay } from '../services/eventManager';
+import { getNightSequence } from '../services/gameLogic';
 
 // Khởi tạo context
 const GameContext = createContext();
@@ -32,7 +34,6 @@ const ACTIONS = {
   RECORD_NIGHT_ACTION: 'record_night_action',
   NEXT_NIGHT_ROLE: 'next_night_role',
   INIT_NIGHT_SEQUENCE: 'init_night_sequence',
-  SET_EXECUTION_PHASE: 'set_execution_phase',
   SET_VOTE_RESULT: 'set_vote_result',
   USE_MINH_OAN: 'use_minh_oan',
   SET_GAME_OVER: 'set_game_over',
@@ -48,14 +49,7 @@ function gameReducer(state, action) {
     case ACTIONS.NEXT_DAY:
       const nextDay = state.currentDay + 1;
       // Xác định sự kiện dựa vào ngày
-      let nextEvent;
-      if (nextDay % 3 === 0) {
-        nextEvent = 'market'; // Ngày 0, 3, 6, ... là Chợ Phiên
-      } else if (nextDay % 3 === 1) {
-        nextEvent = 'harvest'; // Ngày 1, 4, 7, ... là Thu Hoạch
-      } else {
-        nextEvent = 'wine'; // Ngày 2, 5, 8, ... là Tiệc Rượu
-      }
+      const nextEvent = getEventByDay(nextDay);
       
       // Xét xử chỉ bắt đầu từ ngày 4
       const canExecute = nextDay >= 4;
@@ -66,7 +60,9 @@ function gameReducer(state, action) {
         currentEvent: nextEvent,
         executionPhase: {
           ...state.executionPhase,
-          canExecute
+          canExecute,
+          voteResult: null, // Reset kết quả vote cũ
+          usedMinhOan: false // Reset việc sử dụng Minh Oan
         }
       };
     
@@ -74,12 +70,15 @@ function gameReducer(state, action) {
       return { ...state, currentEvent: action.payload };
     
     case ACTIONS.INIT_NIGHT_SEQUENCE:
+      // Sử dụng hàm từ gameLogic để lấy thứ tự gọi
+      const sequence = getNightSequence(action.payload, state.currentDay);
+      
       return {
         ...state,
         nightPhase: {
-          sequence: action.payload,
+          sequence,
           currentIndex: 0,
-          currentRole: action.payload[0] || null,
+          currentRole: sequence[0] || null,
           actions: {},
         }
       };
@@ -152,40 +151,7 @@ export function GameProvider({ children }) {
   const setEvent = (event) => dispatch({ type: ACTIONS.SET_EVENT, payload: event });
   
   const initNightSequence = (playersArray) => {
-    // Xác định thứ tự gọi dậy các nhân vật vào ban đêm
-    const roleOrder = [
-      'PowerTheme', // Phe Quyền Thế chung
-      'Bá Kiến',
-      'Lý Cường',
-      'Bà Ba',
-      'Đội Tảo',
-      'Lão Hạc',
-      'Thị Nở',
-      'Ông Giáo',
-      'Bà Cô của Thị Nở',
-      'Binh Chức', // Chỉ đêm đầu tiên
-      'Chí Phèo',
-      'Năm Thọ',
-      'Tự Lãng'
-    ];
-    
-    // Lọc ra những vai trò có trong game hiện tại
-    const activeRoles = roleOrder.filter(role => {
-      if (role === 'PowerTheme') {
-        // Kiểm tra xem có thành viên phe Quyền Thế nào không
-        return playersArray.some(p => p.team === 'Quyền Thế');
-      }
-      
-      // Nếu là Binh Chức và không phải đêm đầu, bỏ qua
-      if (role === 'Binh Chức' && state.currentDay > 0) {
-        return false;
-      }
-      
-      // Kiểm tra xem vai trò có tồn tại trong danh sách người chơi không
-      return playersArray.some(p => p.role === role);
-    });
-    
-    dispatch({ type: ACTIONS.INIT_NIGHT_SEQUENCE, payload: activeRoles });
+    dispatch({ type: ACTIONS.INIT_NIGHT_SEQUENCE, payload: playersArray });
   };
   
   const nextNightRole = () => dispatch({ type: ACTIONS.NEXT_NIGHT_ROLE });

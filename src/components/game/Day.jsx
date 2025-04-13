@@ -11,6 +11,7 @@ import MarketDay from './Events/MarketDay';
 import HarvestDay from './Events/HarvestDay';
 import WineParty from './Events/WineParty';
 import Execution from './Events/Execution';
+import { checkAllVictoryConditions } from '../../services/victoryConditions';
 
 function Day({ date, onEnd }) {
   const titleRef = useRef(null);
@@ -19,13 +20,21 @@ function Day({ date, onEnd }) {
   const playerContRef = useRef(null);
   const dayRef = useRef(null);
 
-  const { currentEvent, executionPhase } = useGameContext();
-  const { players, setPlayers } = usePlayerContext();
+  const { currentEvent, executionPhase, setGameOver } = useGameContext();
+  const { players } = usePlayerContext();
 
   const [filterTeam, setFilterTeam] = useState('all');
   const [playerToSee, setPlayerToSee] = useState(null);
   const [showEvent, setShowEvent] = useState(false);
   const [eventMessages, setEventMessages] = useState([]);
+
+  // Kiểm tra điều kiện chiến thắng
+  useEffect(() => {
+    const victoryCheck = checkAllVictoryConditions(players);
+    if (victoryCheck.victory) {
+      setGameOver(victoryCheck.winner);
+    }
+  }, [players]);
 
   // Animation effect
   useEffect(() => {

@@ -6,6 +6,8 @@ import Night from './game/Night'
 import EndGame from './game/EndGame'
 import { useGameContext } from '../context/GameContext'
 import { usePlayerContext } from '../context/PlayerContext'
+import { processFrustrationEffects } from '../utils/statusEffects'
+import { checkAllVictoryConditions } from '../services/victoryConditions'
 
 function GamePlay() {
   const { 
@@ -14,10 +16,30 @@ function GamePlay() {
     gameOver, 
     winner, 
     setPhase,
-    nextDay
+    nextDay,
+    setGameOver
   } = useGameContext();
   
-  const { players, setPlayers } = usePlayerContext();
+  const { 
+    players, 
+    setPlayers, 
+    removePlayer, 
+    changeTeam 
+  } = usePlayerContext();
+
+  // Kiểm tra các điều kiện chiến thắng và trạng thái người chơi
+  useEffect(() => {
+    if (players.length > 0 && !gameOver) {
+      // Xử lý người chơi có 2 điểm uất ức
+      const frustrationResults = processFrustrationEffects(players, removePlayer, changeTeam);
+      
+      // Kiểm tra chiến thắng sau các thay đổi
+      const victoryResults = checkAllVictoryConditions(players);
+      if (victoryResults.victory) {
+        setGameOver(victoryResults.winner);
+      }
+    }
+  }, [players, currentPhase]);
 
   // Xử lý khi người chơi được thiết lập
   const handleSetupComplete = (playerArray) => {

@@ -15,7 +15,7 @@ import MinhOan from "../../assets/shop/MinhOan.png";
 import Ruou from "../../assets/shop/RuouDe.png";
 
 function PlayerMenu(props) {
-  const { players, addItem, removeCoins, removeItem, setDrunk, unsetDrunk, unsetMuted } = usePlayerContext();
+  const { players, addItem, removeCoins, removeItem, setDrunk, unsetDrunk, unsetMuted, revivePlayer } = usePlayerContext();
   const { currentEvent } = useGameContext();
   
   const [activeTab, setActiveTab] = useState('info');
@@ -101,7 +101,16 @@ function PlayerMenu(props) {
         }
         break;
         
-      // Các thẻ khác sẽ được triển khai tương tự
+      case 'Hồi Hương':
+        // Gọi người đã chết trở về làng
+        if (!targetPlayer.alive) {
+          revivePlayer(targetPlayer.id);
+          removeItem(props.player.id, 'Hồi Hương');
+          setUseResult({ success: true, message: `Đã gọi ${targetPlayer.name} trở về làng.` });
+        } else {
+          setUseResult({ success: false, message: 'Không thể gọi người này trở về làng.' });
+        }
+        break;
         
       default:
         setUseResult({ success: false, message: 'Chức năng chưa được triển khai.' });

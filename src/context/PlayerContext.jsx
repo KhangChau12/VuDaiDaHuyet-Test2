@@ -25,6 +25,7 @@ const ACTIONS = {
   UNSET_DRUNK: 'unset_drunk',
   INCREASE_WINE: 'increase_wine',
   REMOVE_PLAYER: 'remove_player',
+  REVIVE_PLAYER: 'revive_player',
   CHANGE_TEAM: 'change_team',
   SET_MUTED: 'set_muted',
   UNSET_MUTED: 'unset_muted'
@@ -154,6 +155,16 @@ function playerReducer(state, action) {
         )
       };
     
+    case ACTIONS.REVIVE_PLAYER:
+      return {
+        ...state,
+        players: state.players.map(player => 
+          player.id === action.payload 
+            ? { ...player, alive: true }
+            : player
+        )
+      };
+    
     case ACTIONS.CHANGE_TEAM:
       return {
         ...state,
@@ -267,6 +278,10 @@ export function PlayerProvider({ children }) {
     dispatch({ type: ACTIONS.REMOVE_PLAYER, payload: playerId });
   };
   
+  const revivePlayer = (playerId) => {
+    dispatch({ type: ACTIONS.REVIVE_PLAYER, payload: playerId });
+  };
+  
   const changeTeam = (playerId, team) => {
     dispatch({ 
       type: ACTIONS.CHANGE_TEAM, 
@@ -309,6 +324,7 @@ export function PlayerProvider({ children }) {
     unsetDrunk,
     increaseWine,
     removePlayer,
+    revivePlayer,
     changeTeam,
     setMuted,
     unsetMuted,

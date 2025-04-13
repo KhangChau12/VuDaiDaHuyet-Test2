@@ -5,6 +5,8 @@ import background from "../../assets/image.png";
 import { useGameContext } from '../../context/GameContext'
 import { usePlayerContext } from '../../context/PlayerContext'
 import { getNightActionPrompt } from '../../utils/nightSequence'
+import { processDrunkEffects } from '../../utils/statusEffects'
+import { checkAllVictoryConditions } from '../../services/victoryConditions'
 import PowerTheme from './NightActions/PowerTheme'
 import BaKien from './NightActions/BaKien'
 import LyCuong from './NightActions/LyCuong'
@@ -18,25 +20,55 @@ import BinhChuc from './NightActions/BinhChuc'
 import ChiPheo from './NightActions/ChiPheo'
 import NamTho from './NightActions/NamTho'
 import TuLang from './NightActions/TuLang'
+import Drunk from './Drunk'
+import BlackMarket from './BlackMarket'
 
 function Night({ date, onEnd }) {
   const { 
+    currentEvent,
     nightPhase, 
     initNightSequence, 
     nextNightRole,
-    recordNightAction 
+    recordNightAction,
+    setGameOver 
   } = useGameContext();
   
-  const { players } = usePlayerContext();
+  const { players, unsetDrunk } = usePlayerContext();
   
   const [showTitle, setShowTitle] = useState(true);
   const [animationComplete, setAnimationComplete] = useState(false);
+  const [showDrunkEffects, setShowDrunkEffects] = useState(false);
+  const [showBlackMarket, setShowBlackMarket] = useState(false);
+  const [nightMessages, setNightMessages] = useState([]);
   
-  // Khởi tạo thứ tự gọi nhân vật ban đêm
+  // Kiểm tra điều kiện chiến thắng
+  useEffect(() => {
+    const victoryCheck = checkAllVictoryConditions(players);
+    if (victoryCheck.victory) {
+      setGameOver(victoryCheck.winner);
+    }
+  }, [players]);
+  
+  // Khởi tạo thứ tự gọi nhân vật ban đêm sau khi xử lý say rượu
   useEffect(() => {
     const alivePlayers = players.filter(p => p.alive);
+    
+    // Nếu hôm sau là ngày Chợ Phiên, hiện Chợ Đen
+    if (currentEvent === 'market' && !showBlackMarket) {
+      setShowBlackMarket(true);
+      return;
+    }
+    
+    // Xử lý trạng thái say rượu trước
+    const drunkPlayerIds = processDrunkEffects(alivePlayers, unsetDrunk);
+    if (drunkPlayerIds.length > 0 && !showDrunkEffects) {
+      setShowDrunkEffects(true);
+      return;
+    }
+    
+    // Khởi tạo thứ tự gọi nhân vật
     initNightSequence(alivePlayers);
-  }, []);
+  }, [showBlackMarket, showDrunkEffects]);
   
   // Animation cho title
   useEffect(() => {
@@ -47,6 +79,22 @@ function Night({ date, onEnd }) {
       }, 1000);
     }, 1000);
   }, []);
+  
+  // Xử lý hoàn thành Chợ Đen
+  const handleBlackMarketComplete = (messages) => {
+    setShowBlackMarket(false);
+    if (messages && messages.length > 0) {
+      setNightMessages([...nightMessages, ...messages]);
+    }
+  };
+  
+  // Xử lý hoàn thành Say Rượu
+  const handleDrunkComplete = (messages) => {
+    setShowDrunkEffects(false);
+    if (messages && messages.length > 0) {
+      setNightMessages([...nightMessages, ...messages]);
+    }
+  };
   
   // Xử lý hành động của nhân vật hiện tại
   const handleRoleAction = (action) => {
@@ -66,6 +114,18 @@ function Night({ date, onEnd }) {
         <div className="night-summary">
           <h3>Kết thúc đêm</h3>
           <p>Tất cả nhân vật đã thực hiện hành động trong đêm.</p>
+          
+          {nightMessages.length > 0 && (
+            <div className="night-messages">
+              <h4>Tóm tắt sự kiện trong đêm:</h4>
+              <ul>
+                {nightMessages.map((message, index) => (
+                  <li key={index}>{message}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          
           <button 
             className="submit-button" 
             onClick={onEnd}
@@ -126,7 +186,17 @@ function Night({ date, onEnd }) {
         </div>
       )}
       
-      {animationComplete && (
+      {/* Hiển thị Chợ Đen nếu đêm trước ngày Chợ Phiên */}
+      {showBlackMarket && (
+        <BlackMarket onComplete={handleBlackMarketComplete} />
+      )}
+      
+      {/* Hiển thị xử lý Say Rượu */}
+      {showDrunkEffects && !showBlackMarket && (
+        <Drunk onComplete={handleDrunkComplete} />
+      )}
+      
+      {animationComplete && !showBlackMarket && !showDrunkEffects && (
         <div className="night-container">
           <div id='game_title' style={{ opacity: 1 }}>
             <h2>Đêm đến, mọi người đi ngủ</h2>
