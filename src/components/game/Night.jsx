@@ -1,4 +1,4 @@
-// File: src/components/game/Night.jsx - Sửa toàn bộ file
+// File: src/components/game/Night.jsx
 
 import React, { useEffect, useState } from 'react'
 import "../../styles/home.css"
@@ -44,7 +44,8 @@ function Night({ date, onEnd }) {
     removeCoins,
     addCoins,
     removePlayer,
-    setMuted
+    setMuted,
+    changeTeam
   } = usePlayerContext();
   
   const [showTitle, setShowTitle] = useState(true);
@@ -52,7 +53,9 @@ function Night({ date, onEnd }) {
   const [showDrunkEffects, setShowDrunkEffects] = useState(false);
   const [showBlackMarket, setShowBlackMarket] = useState(false);
   const [nightMessages, setNightMessages] = useState([]);
-  const [actionsProcessed, setActionsProcessed] = useState(false);
+  const [protectedPlayerId, setProtectedPlayerId] = useState(null);
+  const [playersToRemove, setPlayersToRemove] = useState([]);
+  const [nightEnded, setNightEnded] = useState(false);
   
   // Kiểm tra điều kiện chiến thắng
   useEffect(() => {
@@ -85,15 +88,13 @@ function Night({ date, onEnd }) {
     initNightSequence(alivePlayers);
   }, [showBlackMarket, showDrunkEffects]);
 
-  // Xử lý các hành động đêm khi kết thúc tất cả các lượt
+  // Xử lý các tác động của điểm uất ức khi đêm kết thúc
   useEffect(() => {
-    // Chỉ xử lý khi tất cả nhân vật đã hành động và chưa xử lý các hành động
-    if (!nightPhase.currentRole && nightPhase.actions && Object.keys(nightPhase.actions).length > 0 && !actionsProcessed) {
-      processNightActions();
-      setActionsProcessed(true);
+    if (nightEnded && !nightPhase.currentRole) {
+      processEndOfNightEffects();
     }
-  }, [nightPhase.currentRole, nightPhase.actions]);
-  
+  }, [nightEnded]);
+
   // Animation cho title
   useEffect(() => {
     setTimeout(() => {
@@ -103,161 +104,6 @@ function Night({ date, onEnd }) {
       }, 1000);
     }, 1000);
   }, []);
-  
-  // Xử lý các hành động đêm
-  const processNightActions = () => {
-    const { actions } = nightPhase;
-    const messages = [];
-    
-    // Tìm người được Lão Hạc bảo vệ
-    const protectedPlayerId = actions['Lão Hạc']?.targetId;
-    
-    // Xử lý đàn áp từ phe Quyền Thế
-    if (actions['PowerTheme']?.type === 'oppress') {
-      const targetId = actions['PowerTheme'].targetId;
-      const targetPlayer = players.find(p => p.id === targetId);
-      
-      if (targetPlayer && targetId !== protectedPlayerId) {
-        increaseFrustration(targetId, 1);
-        messages.push(`${targetPlayer.name} bị đàn áp bởi phe Quyền Thế và tăng 1 điểm uất ức.`);
-      } else if (targetPlayer && targetId === protectedPlayerId) {
-        messages.push(`${targetPlayer.name} được Lão Hạc bảo vệ khỏi đàn áp.`);
-      }
-    }
-    
-    // Xử lý đàn áp từ Bá Kiến
-    if (actions['Bá Kiến']?.type === 'oppress') {
-      const targetId = actions['Bá Kiến'].targetId;
-      const targetPlayer = players.find(p => p.id === targetId);
-      
-      if (targetPlayer && targetId !== protectedPlayerId) {
-        increaseFrustration(targetId, 1);
-        messages.push(`${targetPlayer.name} bị đàn áp bởi Bá Kiến và tăng 1 điểm uất ức.`);
-      } else if (targetPlayer && targetId === protectedPlayerId) {
-        messages.push(`${targetPlayer.name} được Lão Hạc bảo vệ khỏi đàn áp.`);
-      }
-    }
-    
-    // Xử lý tống tiền từ Lý Cường
-    if (actions['Lý Cường']?.type === 'extort') {
-      const targetIds = actions['Lý Cường'].targetIds || [];
-      let totalExtortedMoney = 0;
-      
-      targetIds.forEach(targetId => {
-        const targetPlayer = players.find(p => p.id === targetId);
-        if (targetPlayer && targetPlayer.coins > 0) {
-          removeCoins(targetId, 1);
-          totalExtortedMoney += 1;
-          messages.push(`${targetPlayer.name} bị Lý Cường tống tiền 1 đồng.`);
-        }
-      });
-      
-      // Phân chia tiền cho phe Quyền Thế
-      if (totalExtortedMoney > 0) {
-        const powerThemeMembers = players.filter(p => p.team === 'Quyền Thế' && p.alive);
-        const sharePerMember = Math.floor(totalExtortedMoney / powerThemeMembers.length);
-        const remainder = totalExtortedMoney % powerThemeMembers.length;
-        
-        powerThemeMembers.forEach((member, index) => {
-          const share = index < remainder ? sharePerMember + 1 : sharePerMember;
-          if (share > 0) {
-            addCoins(member.id, share);
-          }
-        });
-        
-        messages.push(`Phe Quyền Thế nhận được ${totalExtortedMoney} đồng từ tống tiền.`);
-      }
-    }
-    
-    // Xử lý giúp đỡ từ Thị Nở
-    if (actions['Thị Nở']?.type === 'help') {
-      const targetId = actions['Thị Nở'].targetId;
-      const targetPlayer = players.find(p => p.id === targetId);
-      
-      if (targetPlayer && targetPlayer.frustration > 0) {
-        decreaseFrustration(targetId, 1);
-        messages.push(`${targetPlayer.name} được Thị Nở giúp đỡ giảm 1 điểm uất ức.`);
-      }
-    }
-    
-    // Xử lý ép buộc từ Đội Tảo
-    if (actions['Đội Tảo']?.type === 'force') {
-      const targetId = actions['Đội Tảo'].targetId;
-      const targetPlayer = players.find(p => p.id === targetId);
-      
-      if (targetPlayer && !targetPlayer.shutup) {
-        setMuted(targetId);
-        messages.push(`${targetPlayer.name} bị Đội Tảo ép buộc.`);
-      }
-    }
-    
-    // Xử lý thanh trừng từ Đội Tảo
-    if (actions['Đội Tảo']?.type === 'kill') {
-      const targetId = actions['Đội Tảo'].targetId;
-      const targetPlayer = players.find(p => p.id === targetId);
-      
-      if (targetPlayer) {
-        removePlayer(targetId);
-        messages.push(`${targetPlayer.name} bị Đội Tảo thanh trừng và rời khỏi làng.`);
-      }
-    }
-    
-    // Xử lý tấn công từ Chí Phèo
-    if (actions['Chí Phèo']?.type === 'attack') {
-      const targetId = actions['Chí Phèo'].targetId;
-      const targetPlayer = players.find(p => p.id === targetId);
-      
-      if (targetPlayer) {
-        removePlayer(targetId);
-        messages.push(`${targetPlayer.name} bị Chí Phèo tấn công và rời khỏi làng.`);
-      }
-    }
-    
-    // Xử lý cướp tiền từ Năm Thọ
-    if (actions['Năm Thọ']?.type === 'rob') {
-      const targetId = actions['Năm Thọ'].targetId;
-      const targetPlayer = players.find(p => p.id === targetId);
-      const namTho = players.find(p => p.role === 'Năm Thọ');
-      
-      if (targetPlayer && targetPlayer.role === 'Bá Kiến') {
-        // Nếu cướp nhầm Bá Kiến
-        if (namTho) {
-          removePlayer(namTho.id);
-          messages.push(`Năm Thọ cướp nhầm nhà Bá Kiến và phải rời khỏi làng.`);
-        }
-      } else if (targetPlayer) {
-        // Cướp thành công
-        const amountToRob = Math.min(targetPlayer.coins, 3);
-        if (amountToRob > 0) {
-          removeCoins(targetId, amountToRob);
-          if (namTho) {
-            addCoins(namTho.id, amountToRob);
-          }
-          messages.push(`${targetPlayer.name} bị Năm Thọ cướp ${amountToRob} đồng.`);
-        }
-      }
-    }
-    
-    // Xử lý bán rượu từ Tự Lãng
-    if (actions['Tự Lãng']?.type === 'sell') {
-      const targetId = actions['Tự Lãng'].targetId;
-      const targetPlayer = players.find(p => p.id === targetId);
-      const tuLang = players.find(p => p.role === 'Tự Lãng');
-      
-      if (targetPlayer && targetPlayer.coins > 0) {
-        removeCoins(targetId, 1);
-        if (tuLang) {
-          addCoins(tuLang.id, 1);
-        }
-        messages.push(`${targetPlayer.name} mua rượu từ Tự Lãng.`);
-      }
-    }
-    
-    // Cập nhật tin nhắn đêm
-    if (messages.length > 0) {
-      setNightMessages(prev => [...prev, ...messages]);
-    }
-  };
   
   // Xử lý hoàn thành Chợ Đen
   const handleBlackMarketComplete = (messages) => {
@@ -275,10 +121,253 @@ function Night({ date, onEnd }) {
     }
   };
   
-  // Xử lý hành động của nhân vật hiện tại
+  // Xử lý hiệu ứng cuối đêm
+  const processEndOfNightEffects = () => {
+    const newMessages = [];
+    
+    // Tạo bản sao của danh sách người chơi để kiểm tra
+    const allPlayers = [...players];
+    
+    // Xử lý từng người trong danh sách có nguy cơ bị loại
+    playersToRemove.forEach(playerId => {
+      const player = allPlayers.find(p => p.id === playerId);
+      
+      // Kiểm tra lại xem người này có còn đủ điều kiện bị loại không
+      if (player && player.alive && player.frustration >= 2) {
+        if (player.role === 'Chí Phèo') {
+          // Chí Phèo chuyển sang phe Công Lý thay vì bị loại
+          changeTeam(playerId, 'Công Lý');
+          newMessages.push(`${player.name} (Chí Phèo) đã chuyển sang phe Công Lý do tích lũy 2 điểm uất ức!`);
+        } else if (player.role === 'Binh Chức') {
+          // Binh Chức kéo theo 1 thành viên phe Quyền Thế bên phải
+          removePlayer(playerId);
+          newMessages.push(`${player.name} (Binh Chức) đã rời khỏi làng do tích lũy 2 điểm uất ức.`);
+          
+          // Tìm thành viên phe Quyền Thế gần nhất bên phải
+          const powerThemeMembers = allPlayers.filter(p => p.team === 'Quyền Thế' && p.alive);
+          if (powerThemeMembers.length > 0) {
+            // TODO: Tìm thành viên phe Quyền Thế gần nhất bên phải
+            // (Giản lược ở đây, sẽ lấy thành viên đầu tiên)
+            const targetId = powerThemeMembers[0].id;
+            removePlayer(targetId);
+            newMessages.push(`${powerThemeMembers[0].name} (${powerThemeMembers[0].role}) cũng bị loại do hiệu ứng của Binh Chức.`);
+          }
+        } else {
+          // Người chơi thông thường rời làng
+          removePlayer(playerId);
+          newMessages.push(`${player.name} (${player.role}) đã rời khỏi làng do tích lũy 2 điểm uất ức.`);
+        }
+      }
+    });
+    
+    // Cập nhật messages
+    if (newMessages.length > 0) {
+      setNightMessages(prev => [...prev, ...newMessages]);
+    }
+    
+    // Reset danh sách
+    setPlayersToRemove([]);
+  };
+  
+  // Kiểm tra và cập nhật danh sách người chơi có thể bị loại
+  const checkAndUpdateRemovalList = (playerId) => {
+    const player = players.find(p => p.id === playerId);
+    
+    if (player && player.frustration >= 2) {
+      // Nếu người chơi đã có trong danh sách thì không thêm lại
+      if (!playersToRemove.includes(playerId)) {
+        setPlayersToRemove(prev => [...prev, playerId]);
+      }
+    } else {
+      // Nếu điểm uất ức đã giảm dưới 2, loại khỏi danh sách
+      setPlayersToRemove(prev => prev.filter(id => id !== playerId));
+    }
+  };
+  
+  // Xử lý hành động của nhân vật ngay khi nó xảy ra
   const handleRoleAction = (action) => {
-    // Ghi lại hành động
-    recordNightAction(nightPhase.currentRole, action);
+    const currentRole = nightPhase.currentRole;
+    let messages = [];
+    
+    // Nếu đây là lượt cuối, đánh dấu đêm kết thúc
+    if (nightPhase.currentIndex === nightPhase.sequence.length - 1) {
+      setNightEnded(true);
+    }
+    
+    // Xử lý hành động dựa vào vai trò
+    switch (currentRole) {
+      case 'Lão Hạc':
+        if (action.type === 'protect' && action.targetId) {
+          setProtectedPlayerId(action.targetId);
+          const targetPlayer = players.find(p => p.id === action.targetId);
+          messages.push(`Lão Hạc đã bảo vệ ${targetPlayer?.name} khỏi bị đàn áp.`);
+        }
+        break;
+      
+      case 'PowerTheme':
+        if (action.type === 'oppress' && action.targetId) {
+          const targetPlayer = players.find(p => p.id === action.targetId);
+          
+          if (targetPlayer && action.targetId !== protectedPlayerId) {
+            increaseFrustration(action.targetId, 1);
+            messages.push(`${targetPlayer.name} bị đàn áp bởi phe Quyền Thế và tăng 1 điểm uất ức.`);
+            
+            // Kiểm tra nếu người này đã tích lũy đủ 2 điểm uất ức
+            checkAndUpdateRemovalList(action.targetId);
+          } else if (targetPlayer && action.targetId === protectedPlayerId) {
+            messages.push(`${targetPlayer.name} được Lão Hạc bảo vệ khỏi đàn áp.`);
+          }
+        }
+        break;
+      
+      case 'Bá Kiến':
+        if (action.type === 'oppress' && action.targetId) {
+          const targetPlayer = players.find(p => p.id === action.targetId);
+          
+          if (targetPlayer && action.targetId !== protectedPlayerId) {
+            increaseFrustration(action.targetId, 1);
+            messages.push(`${targetPlayer.name} bị đàn áp bởi Bá Kiến và tăng 1 điểm uất ức.`);
+            
+            // Kiểm tra nếu người này đã tích lũy đủ 2 điểm uất ức
+            checkAndUpdateRemovalList(action.targetId);
+          } else if (targetPlayer && action.targetId === protectedPlayerId) {
+            messages.push(`${targetPlayer.name} được Lão Hạc bảo vệ khỏi đàn áp.`);
+          }
+        }
+        break;
+      
+      case 'Lý Cường':
+        if (action.type === 'extort') {
+          const targetIds = action.targetIds || [];
+          let totalExtortedMoney = 0;
+          
+          targetIds.forEach(targetId => {
+            const targetPlayer = players.find(p => p.id === targetId);
+            if (targetPlayer && targetPlayer.coins > 0) {
+              removeCoins(targetId, 1);
+              totalExtortedMoney += 1;
+              messages.push(`${targetPlayer.name} bị Lý Cường tống tiền 1 đồng.`);
+            }
+          });
+          
+          // Phân chia tiền cho phe Quyền Thế
+          if (totalExtortedMoney > 0) {
+            const powerThemeMembers = players.filter(p => p.team === 'Quyền Thế' && p.alive);
+            const sharePerMember = Math.floor(totalExtortedMoney / powerThemeMembers.length);
+            const remainder = totalExtortedMoney % powerThemeMembers.length;
+            
+            powerThemeMembers.forEach((member, index) => {
+              const share = index < remainder ? sharePerMember + 1 : sharePerMember;
+              if (share > 0) {
+                addCoins(member.id, share);
+              }
+            });
+            
+            messages.push(`Phe Quyền Thế nhận được ${totalExtortedMoney} đồng từ tống tiền.`);
+          }
+        }
+        break;
+      
+      case 'Thị Nở':
+        if (action.type === 'help' && action.targetId) {
+          const targetPlayer = players.find(p => p.id === action.targetId);
+          
+          if (targetPlayer && targetPlayer.frustration > 0) {
+            decreaseFrustration(action.targetId, 1);
+            messages.push(`${targetPlayer.name} được Thị Nở giúp đỡ giảm 1 điểm uất ức.`);
+            
+            // Kiểm tra lại xem người này có còn đủ điểm uất ức để bị loại không
+            checkAndUpdateRemovalList(action.targetId);
+          }
+          
+          // Xử lý trường hợp Chí Phèo được Thị Nở giúp đỡ 2 lần liên tiếp
+          if (action.isSecondNight && targetPlayer && targetPlayer.role === 'Chí Phèo' && targetPlayer.team !== 'Công Lý') {
+            changeTeam(action.targetId, 'Công Lý');
+            messages.push(`${targetPlayer.name} (Chí Phèo) đã chuyển sang phe Công Lý do được Thị Nở giúp đỡ 2 đêm liên tiếp!`);
+          }
+        }
+        break;
+      
+      case 'Đội Tảo':
+        if (action.type === 'force' && action.targetId) {
+          const targetPlayer = players.find(p => p.id === action.targetId);
+          
+          if (targetPlayer && !targetPlayer.shutup) {
+            setMuted(action.targetId);
+            messages.push(`${targetPlayer.name} bị Đội Tảo ép buộc.`);
+          }
+        } else if (action.type === 'kill' && action.targetId) {
+          const targetPlayer = players.find(p => p.id === action.targetId);
+          
+          if (targetPlayer) {
+            // Giết người là hành động trực tiếp, luôn được thực hiện ngay lập tức
+            removePlayer(action.targetId);
+            messages.push(`${targetPlayer.name} bị Đội Tảo thanh trừng và rời khỏi làng.`);
+          }
+        }
+        break;
+      
+      case 'Chí Phèo':
+        if (action.type === 'attack' && action.targetId) {
+          const targetPlayer = players.find(p => p.id === action.targetId);
+          
+          if (targetPlayer) {
+            // Giết người là hành động trực tiếp, luôn được thực hiện ngay lập tức
+            removePlayer(action.targetId);
+            messages.push(`${targetPlayer.name} bị Chí Phèo tấn công và rời khỏi làng.`);
+          }
+        }
+        break;
+      
+      case 'Năm Thọ':
+        if (action.type === 'rob' && action.targetId) {
+          const targetPlayer = players.find(p => p.id === action.targetId);
+          const namTho = players.find(p => p.role === 'Năm Thọ');
+          
+          if (targetPlayer && targetPlayer.role === 'Bá Kiến') {
+            // Nếu cướp nhầm Bá Kiến
+            if (namTho) {
+              // Năm Thọ bị loại ngay lập tức vì đây là hành động trực tiếp
+              removePlayer(namTho.id);
+              messages.push(`Năm Thọ cướp nhầm nhà Bá Kiến và phải rời khỏi làng.`);
+            }
+          } else if (targetPlayer) {
+            // Cướp thành công
+            const amountToRob = Math.min(targetPlayer.coins, 3);
+            if (amountToRob > 0) {
+              removeCoins(action.targetId, amountToRob);
+              if (namTho) {
+                addCoins(namTho.id, amountToRob);
+              }
+              messages.push(`${targetPlayer.name} bị Năm Thọ cướp ${amountToRob} đồng.`);
+            }
+          }
+        }
+        break;
+      
+      case 'Tự Lãng':
+        if (action.type === 'sell' && action.targetId) {
+          const targetPlayer = players.find(p => p.id === action.targetId);
+          const tuLang = players.find(p => p.role === 'Tự Lãng');
+          
+          if (targetPlayer && targetPlayer.coins > 0) {
+            removeCoins(action.targetId, 1);
+            if (tuLang) {
+              addCoins(tuLang.id, 1);
+            }
+            messages.push(`${targetPlayer.name} mua rượu từ Tự Lãng.`);
+          }
+        }
+        break;
+    }
+    
+    // Lưu lại thông báo các hành động xảy ra trong đêm
+    if (messages.length > 0) {
+      setNightMessages(prev => [...prev, ...messages]);
+    }
+    
+    // Ghi lại hành động để hiển thị ở cuối đêm
+    recordNightAction(currentRole, action);
     
     // Chuyển sang nhân vật tiếp theo
     nextNightRole();
@@ -335,7 +424,6 @@ function Night({ date, onEnd }) {
     const RoleComponent = roleComponents[currentRole];
     
     if (RoleComponent) {
-      console.log(players);
       return <RoleComponent onAction={handleRoleAction} />;
     }
     
