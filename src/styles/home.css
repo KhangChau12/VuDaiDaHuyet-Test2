@@ -1,0 +1,346 @@
+#root {
+    width: 90vw;
+    padding: auto;
+}
+
+.home {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 5vh;
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: var(--brown-text-opacity);
+    border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 6px;
+    background-color: var(--brown-menu);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    border-radius: 6px;
+    background-color: #432907;
+}
+
+.background {
+    height: 100vh;
+    width: 100vw;
+    position: fixed;
+    top: 0;
+    right: 0;
+    overflow-y: hidden;
+    z-index: -1;
+}
+
+.background img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: opacity(70%);
+}
+
+.home #title {
+    width: 300px;
+    height: 20%;
+    transition: 1.5s;
+    margin-top: 40%;
+}
+
+#title img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(5px 5px 10px black);
+}
+
+#title h2 {
+    width: 100%;
+    height: fit-content;
+    font-size: 10vw;
+}
+
+.home #menu {
+    width: 0;
+    opacity: 0;
+    border-radius: 20px;
+    height: fit-content;
+    background-color: var(--brown-menu);
+    color: var(--brown-text);
+    font-size: 4vw;
+    transition: 1.5s;
+    padding: 5px;
+    padding-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    overflow: hidden;
+}
+
+.home #menu h2 {
+    margin: 0;
+    white-space: nowrap;
+}
+
+.home .button {
+    width: 0;
+    height: fit-content;
+    font-size: 3vw;
+    padding: 5px 15px;
+    background-color: var(--brown-text);
+    color: var(--brown-menu);
+    border-radius: 30px;
+    transition: 0.5s;
+    overflow: hidden;
+}
+
+.home .button h3 {
+    margin: 0;
+    white-space: nowrap;
+}
+
+.home .button:hover {
+    filter: brightness(0.5);
+}
+
+.instruction #title {
+    width: 90%;
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.instruction #container {
+    position: absolute;
+    bottom: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 60%;
+    width: calc(90% + 6px);
+    margin-left: 3px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.instruction .content {
+    padding: 0 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.instruction h1 {
+    position: absolute;
+    top: 20%;
+    left: 0;
+    text-align: center;
+    margin: 0;
+    width: 100%;
+    font-size: 32px;
+    color: var(--brown-text);
+    text-shadow: 5px 5px 10px black;
+}
+
+.instruction h2 {
+    margin: 0;
+    font-size: 20px;
+    color: var(--brown-text);
+    text-shadow: 5px 5px 10px black;
+}
+
+.instruction :where(p, li) {
+    margin: 0;
+    padding-left: 12px;
+    font-size: 16px;
+    text-align: left;
+    color: var(--ins-text);
+}
+
+.instruction ul {
+    width: 100%;
+    margin: 0;
+    padding: 0 12px;
+}
+
+.instruction li {
+    width: 95%;
+    margin: 0;
+    padding: 0;
+}
+
+.instruction a {
+    background-color: var(--green);
+    padding: 6px 12px 10px 12px;
+    margin-top: 8px;
+    border-radius: 10px;
+    color: var(--brown-text);
+}
+
+.instruction a:hover {
+    opacity: 80%;
+}
+
+.game {
+    width: 100%;
+    margin: 0;
+}
+
+.game #title {
+    width: 100%;
+    height: 100%;
+    color: var(--brown-text);
+    margin-top: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#game_title {
+    color: var(--brown-text);
+    height: fit-content;
+    width: 100%;
+    font-size: 5vw;
+    opacity: 0;
+    transition: 0.5s;
+    margin: 0;
+}
+
+#game_title h2 {
+    margin: 2vh 0;
+}
+
+#player_cont {
+    width: 100%;
+    height: 50vh;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    opacity: 0;
+    transition: 0.5s;
+}
+
+#player_list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3%;
+}
+/* Player filters */
+.player-filters {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding: 0 15px;
+    opacity: 0;
+    transition: 0.5s;
+}
+
+.player-filters button {
+    background-color: var(--brown-menu);
+    color: var(--brown-text);
+    border: 1px solid var(--brown-text);
+    border-radius: 20px;
+    padding: 8px 15px;
+    font-size: 2vh;
+    cursor: pointer;
+    transition: all 0.5s ease;
+}
+
+.player-filters button.active,
+.player-filters button:hover {
+    background-color: var(--brown-text);
+    color: var(--brown-menu);
+}
+
+/* Team sections */
+.team-section {
+    margin-bottom: 30px;
+}
+
+.team-title {
+    color: var(--brown-text);
+    text-align: left;
+    margin-left: 30px;
+    font-size: 20px;
+    border-bottom: 2px solid var(--brown-text-opacity);
+    padding-bottom: 5px;
+    margin-bottom: 15px;
+}
+
+/* No players message */
+.no-players {
+    text-align: center;
+    color: var(--brown-text);
+    padding: 30px;
+    font-style: italic;
+}
+
+/* Day controls */
+.day-controls {
+    margin: 30px 0;
+    display: flex;
+    justify-content: center;
+    opacity: 0;
+    transition: 0.5s;
+}
+
+.next-phase-btn {
+    background-color: var(--brown-text);
+    color: var(--brown-menu);
+    border: none;
+    border-radius: 30px;
+    padding: 12px 25px;
+    font-size: 2vh;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.next-phase-btn:hover {
+    background-color: var(--brown-menu);
+    color: var(--brown-text);
+    border: 1px solid var(--brown-text);
+}
+
+#menu_cont {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .player-list {
+        justify-content: space-around;
+    }
+    
+    .card {
+        width: 45%;
+    }
+}
+
+@media (max-width: 480px) {
+    .card {
+        width: 100%;
+    }
+    
+    .player-filters button {
+        font-size: 12px;
+        padding: 6px 12px;
+    }
+}

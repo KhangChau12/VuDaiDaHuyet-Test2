@@ -1,0 +1,241 @@
+.night-container {
+    width: 90%;
+    margin: 0 auto;
+    padding: 20px 0;
+  }
+  
+  .night-actions-container {
+    background-color: var(--brown-menu);
+    border-radius: 15px;
+    padding: 20px;
+    margin-top: 20px;
+    color: var(--brown-text);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  }
+  
+  .night-action-component {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .night-action-component h3 {
+    font-size: 24px;
+    margin-bottom: 10px;
+    width: 100%;
+    text-align: center;
+  }
+  
+  .night-action-component p {
+    font-size: 16px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .power-theme-members {
+    background-color: rgba(207, 175, 119, 0.3);
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 20px;
+    width: 90%;
+  }
+  
+  .power-theme-members h4 {
+    margin: 0 0 10px 0;
+    font-size: 16px;
+  }
+  
+  .power-theme-members ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .power-theme-members li {
+    margin-bottom: 5px;
+  }
+  
+  .player-selection {
+    width: 90%;
+    margin-bottom: 20px;
+  }
+  
+  .player-selection h4 {
+    margin: 0 0 10px 0;
+    font-size: 16px;
+  }
+  
+  .player-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+  
+  .player-option {
+    background-color: rgba(207, 175, 119, 0.2);
+    border: 1px solid var(--brown-text-opacity);
+    border-radius: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  
+  .player-option:hover {
+    background-color: rgba(207, 175, 119, 0.4);
+  }
+  
+  .player-option.selected {
+    background-color: var(--brown-text);
+    color: var(--brown-menu);
+  }
+  
+  .action-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+  }
+  
+  .submit-button {
+    background-color: var(--brown-text);
+    color: var(--brown-menu);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s;
+  }
+  
+  .submit-button:hover {
+    background-color: #a0894d;
+  }
+  
+  .submit-button:disabled {
+    background-color: #887744;
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+  
+  .night-summary {
+    text-align: center;
+    padding: 20px 0;
+  }
+  
+  .night-summary h3 {
+    font-size: 24px;
+    margin-bottom: 15px;
+  }
+  
+  .night-summary p {
+    font-size: 16px;
+    margin-bottom: 25px;
+  }
+  
+  /* Hiệu ứng say rượu */
+  .drunk-effect {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 0, 0, 0.15);
+    pointer-events: none;
+    animation: pulse 2s infinite;
+    z-index: 10;
+  }
+  
+  @keyframes pulse {
+    0% { opacity: 0.15; }
+    50% { opacity: 0.3; }
+    100% { opacity: 0.15; }
+  }
+/* Thêm các styles cho các nhân vật mới */
+
+.previous-action {
+    background-color: rgba(207, 175, 119, 0.3);
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 15px;
+    width: 90%;
+  }
+  
+  .special-note {
+    color: #ff9800;
+    font-weight: bold;
+  }
+  
+  .check-result {
+    margin-top: 15px;
+    width: 90%;
+    padding: 10px;
+    background-color: rgba(207, 175, 119, 0.3);
+    border-radius: 10px;
+    text-align: center;
+  }
+  
+  .check-result p.success {
+    color: #4caf50;
+    font-weight: bold;
+  }
+  
+  .check-result p.failure {
+    color: #f44336;
+    font-weight: bold;
+  }
+  
+  .check-result p.warning {
+    color: #ff9800;
+    font-weight: bold;
+  }
+  
+  .player-option.special {
+    border: 2px solid #ff9800;
+  }
+  
+  .warning {
+    color: #ff9800;
+    font-style: italic;
+  }
+  
+  .action-type-selection {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    width: 90%;
+  }
+  
+  .action-type-button {
+    background-color: rgba(207, 175, 119, 0.2);
+    border: 1px solid var(--brown-text);
+    color: var(--brown-text);
+    border-radius: 8px;
+    padding: 8px 15px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  
+  .action-type-button.selected {
+    background-color: var(--brown-text);
+    color: var(--brown-menu);
+  }
+  
+  .action-type-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  .thi-no-info, .coins-info, .binh-chuc-info {
+    background-color: rgba(207, 175, 119, 0.3);
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 15px;
+    width: 90%;
+  }
+  
+  .goal {
+    color: #4caf50;
+    font-weight: bold;
+  }

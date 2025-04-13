@@ -1,0 +1,219 @@
+.menu {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.menu .background {
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+}
+
+.menu .background img {
+    filter: opacity(100%);
+}
+
+.menu .info {
+    z-index: 2;
+    width: calc(100% - 40px);
+    height: fit-content;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.menu .card {
+    width: 100%;
+}
+
+.menu .card h3 {
+    font-size: 20px;
+}
+
+.menu .card p {
+    font-size: 8px;
+}
+
+.menu .other_info {
+    width: calc(70% - 20px);
+}
+
+.shop_cont {
+    width: 90%;
+    z-index: 2;
+    overflow-x: scroll;
+}
+
+.shop {
+    width: fit-content;
+    display: flex;
+    gap: 10px;
+    scroll-snap-type: x mandatory;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+}
+
+.item {
+    width: calc(45vw - 25px);
+    background-color: var(--brown-menu);
+    border-radius: 10px;
+    padding: 10px;
+    color: var(--brown-text);
+    scroll-snap-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.item img {
+    width: 80%;
+    aspect-ratio: 1/1;
+}
+
+.item :where(h3, h4, p) {
+    margin: 0;
+}
+
+.item h3 {
+    font-size: 20px;
+    line-height: 24px;
+}
+
+.item h4 {
+    font-size: 16px;
+    line-height: 20px;
+}
+
+.item p {
+    font-size: 16px;
+    line-height: 20px;
+}
+
+.item a {
+    font-size: 16px;
+    line-height: 20px;
+    color: var(--brown-menu);
+}
+
+.item .count {
+    margin-top: auto;
+}
+
+.item .use {
+    padding: 5px 10px;
+    background-color: var(--brown-text);
+    width: calc(100% - 20px);
+    height: fit-content;
+    border-radius: 5px;
+    margin-top: 2px;
+}
+
+/* Phần dành cho Trade */
+.trade-container {
+    width: 90%;
+    background-color: var(--brown-menu);
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+  }
+  
+  .trade-container h2 {
+    text-align: center;
+    margin-bottom: 15px;
+  }
+  
+  .trade-type-selection {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .trade-type-button {
+    background-color: var(--brown-text-opacity);
+    color: var(--brown-menu);
+    border: none;
+    border-radius: 8px;
+    padding: 8px 15px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  
+  .trade-type-button.active {
+    background-color: var(--brown-text);
+    font-weight: bold;
+  }
+  
+  .player-list.trade {
+    max-height: 150px;
+    overflow-y: auto;
+  }
+  
+  .money-trade, .item-trade {
+    margin-top: 20px;
+  }
+  
+  .amount-control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 15px 0;
+  }
+  
+  .amount-control input {
+    width: 80px;
+    background-color: var(--brown-text-opacity);
+    color: var(--brown-menu);
+    border: 1px solid var(--brown-text);
+    border-radius: 5px;
+    padding: 5px;
+    text-align: center;
+  }
+  
+  .item-selection {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 15px 0;
+  }
+  
+  .item-option {
+    background-color: var(--brown-text-opacity);
+    color: var(--brown-menu);
+    border: 1px solid var(--brown-text);
+    border-radius: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  
+  .item-option.selected {
+    background-color: var(--brown-text);
+    font-weight: bold;
+  }
+  
+  .trade-button {
+    display: block;
+    margin: 20px auto 0;
+    background-color: var(--brown-text);
+    color: var(--brown-menu);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s;
+  }
+  
+  .trade-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }

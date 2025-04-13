@@ -1,0 +1,74 @@
+.card_menu {
+    width: 100%;
+    height: 150px;
+    background-color: var(--brown-menu);
+    border-radius: 20px;
+    padding: 0;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    display: flex;
+    background-color: black;
+    position: relative;
+}
+
+.card_menu .background-card {
+    width: 35%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.card_menu .background-card img {
+    width: 100%;
+    border-radius: 20px 0 0 20px;
+    height: fit-content;
+}
+
+.card_menu .background-card p {
+    background-color: var(--brown-text);
+    position: absolute;
+    bottom: 0;
+    margin: 0;
+    width: 35%;
+    height: 20%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--brown-menu);
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 24px;
+}
+
+.card_menu .player-info {
+    text-align: center;
+    background-color: var(--brown-menu);
+    color: var(--brown-text);
+    width: calc(65% - 20px);
+    height: calc(100% - 20px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    padding: 10px;
+}
+
+.card_menu .player-info h2 {
+    height: 20%;
+    font-size: 20px;
+    line-height: 24px;
+    margin: 0;
+    width: 100%;
+    text-align: left;
+}
+
+.card_menu .player-info p {
+    height: 15%;
+    font-size: 16px;
+    line-height: 20px;
+    margin: 0;
+    width: 100%;
+    text-align: left;
+}
