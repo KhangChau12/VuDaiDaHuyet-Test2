@@ -224,6 +224,12 @@
   transition: all 0.2s;
 }
 
+.item .use a {
+  color: #3a2005;
+  font-size: 18px;
+  font-weight: bold;
+}
+
 .item .use:hover {
   background-color: #e0c487;
 }
@@ -430,7 +436,7 @@
 
 .shop-grid {
   display: flex;
-  flex-direction: column;
+  width: fit-content;
   gap: 15px;
 }
 
@@ -441,7 +447,7 @@
 }
 
 .shop-item {
-  width: 30%;
+  width: 100px;
   background-color: #3a2005;
   border-radius: 10px;
   padding: 12px;
@@ -498,7 +504,7 @@
   font-size: 10px;
   text-align: center;
   margin: 5px 0;
-  height: 40px;
+  height: fit-content;
   overflow: hidden;
 }
 

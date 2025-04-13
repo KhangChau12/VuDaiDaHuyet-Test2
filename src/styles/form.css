@@ -95,7 +95,7 @@
 label {
     font-size: 18px;
     font-weight: bold;
-    color: #5a3825;
+    color: var(--brown-text);
     display: block;
     margin-bottom: 8px;
     margin-top: 5px;
