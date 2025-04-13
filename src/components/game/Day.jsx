@@ -128,6 +128,16 @@ function Day({ date, onEnd }) {
   // Check if execution phase should be shown
   const shouldShowExecution = executionPhase.canExecute && !showEvent;
 
+  // Hàm xử lý menu nhân vật
+  const handlePlayerCardClick = (player) => {
+    setPlayerToSee(player);
+  };
+
+  // Hàm đóng menu
+  const closePlayerMenu = () => {
+    setPlayerToSee(null);
+  };
+
   return (
     <div className='game'>
       <div className='background'>
@@ -204,7 +214,7 @@ function Day({ date, onEnd }) {
                     <Card
                       key={player.id}
                       player={player}
-                      seeMenu={() => { setPlayerToSee(player) }}
+                      seeMenu={() => handlePlayerCardClick(player)}
                     />
                   ))}
                 </div>
@@ -218,7 +228,7 @@ function Day({ date, onEnd }) {
               <Card
                 key={player.id}
                 player={player}
-                seeMenu={() => { setPlayerToSee(player) }}
+                seeMenu={() => handlePlayerCardClick(player)}
               />
             ))}
           </div>
@@ -232,7 +242,11 @@ function Day({ date, onEnd }) {
         )}
       </div>
 
-      {playerToSee && <div id='menu_cont'><PlayerMenu player={playerToSee} back={() => { setPlayerToSee(null) }}></PlayerMenu></div>}
+      {playerToSee && 
+        <div id='menu_cont'>
+          <PlayerMenu player={playerToSee} back={closePlayerMenu} />
+        </div>
+      }
 
       {/* Event overlay */}
       {renderEventComponent()}
@@ -247,7 +261,7 @@ function Day({ date, onEnd }) {
           onClick={onEnd}
           disabled={showEvent || shouldShowExecution}
         >
-          Bắt đầu đêm {date}
+          Bắt đầu đêm {date + 1}
         </button>
       </div>
     </div>

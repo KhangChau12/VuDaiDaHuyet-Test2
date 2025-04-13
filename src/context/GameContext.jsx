@@ -9,7 +9,7 @@ const GameContext = createContext();
 const initialState = {
   currentPhase: 'setup', // setup, day, night
   currentDay: 0,
-  currentEvent: null, // market, harvest, wine, execution
+  currentEvent: 'market', // market, harvest, wine, execution (mặc định ngày 0 là market)
   nightPhase: {
     currentRole: null,
     sequence: [],
@@ -44,6 +44,14 @@ const ACTIONS = {
 function gameReducer(state, action) {
   switch (action.type) {
     case ACTIONS.SET_PHASE:
+      // Khi chuyển từ setup sang day, đảm bảo set currentEvent cho ngày 0
+      if (state.currentPhase === 'setup' && action.payload === 'day') {
+        return { 
+          ...state, 
+          currentPhase: action.payload,
+          currentEvent: 'market' // Ngày 0 luôn là Chợ Phiên
+        };
+      }
       return { ...state, currentPhase: action.payload };
     
     case ACTIONS.NEXT_DAY:

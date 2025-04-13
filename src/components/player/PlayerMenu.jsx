@@ -4,7 +4,7 @@ import CardMenu from './CardMenu';
 import { usePlayerContext } from '../../context/PlayerContext';
 import { useGameContext } from '../../context/GameContext';
 import { ITEM_PRICES } from '../../utils/gameHelpers';
-import Trade from './Trade'; // Thêm import này để fix lỗi
+import Trade from './Trade';
 
 // Import assets
 import background from "../../assets/background_day.png";
@@ -22,6 +22,7 @@ function PlayerMenu(props) {
   const [itemToUse, setItemToUse] = useState(null);
   const [targetPlayer, setTargetPlayer] = useState(null);
   const [useResult, setUseResult] = useState(null);
+  const [buySuccess, setBuySuccess] = useState(null);
   
   // Lấy thông tin giá các thẻ
   const price = ITEM_PRICES;
@@ -43,11 +44,30 @@ function PlayerMenu(props) {
   
   // Hàm mua thẻ
   const buy = (item) => {
-    if (price[item] <= props.player.coins) {
+    if (props.player.coins >= price[item]) {
       removeCoins(props.player.id, price[item]);
       addItem(props.player.id, item);
+      setBuySuccess({
+        success: true,
+        item: item,
+        price: price[item]
+      });
+      
+      // Tự động ẩn thông báo sau 2 giây
+      setTimeout(() => {
+        setBuySuccess(null);
+      }, 2000);
     } else {
-      alert("Không đủ tiền mua " + item);
+      setBuySuccess({
+        success: false,
+        item: item,
+        price: price[item]
+      });
+      
+      // Tự động ẩn thông báo sau 2 giây
+      setTimeout(() => {
+        setBuySuccess(null);
+      }, 2000);
     }
   };
   
@@ -178,7 +198,7 @@ function PlayerMenu(props) {
           className={`menu-tab ${activeTab === 'trade' ? 'active' : ''}`}
           onClick={() => setActiveTab('trade')}
         >
-            Trao đổi
+          Trao đổi
         </div>
       </div>
       
@@ -189,7 +209,7 @@ function PlayerMenu(props) {
       {/* Tab nội dung */}
       {activeTab === 'info' && (
         <div className='player-details'>
-          <h3>Thông tin chi tiết</h3>
+          <h3 className="thong-tin-chi-tiet">Thông tin chi tiết</h3>
           <p><strong>Tên:</strong> {props.player.name}</p>
           <p><strong>Vai trò:</strong> {props.player.role}</p>
           <p><strong>Phe:</strong> {props.player.team}</p>
@@ -200,6 +220,7 @@ function PlayerMenu(props) {
           <ul>
             {props.player.drunk && <li>Đang say rượu</li>}
             {props.player.shutup && <li>Đang bị ép buộc</li>}
+            {!props.player.drunk && !props.player.shutup && <li>Bình thường</li>}
           </ul>
         </div>
       )}
@@ -244,6 +265,8 @@ function PlayerMenu(props) {
                 {player.name} ({player.role})
               </div>
             ))}
+            
+            {getValidTargets().length === 0 && <p>Không có mục tiêu phù hợp.</p>}
           </div>
           
           <div className='action-buttons'>
@@ -267,21 +290,67 @@ function PlayerMenu(props) {
       )}
       
       {activeTab === 'shop' && (
-        <div className='shop_cont'>
+        <>
           {canBuy ? (
-            <div className='shop'>
-              {items.map(item => (
-                <div className='item' key={item.id} onClick={() => buy(item.id)}>
-                  <img src={item.image} alt={item.name} />
-                  <h3>{item.name}</h3>
-                  <h4>{item.price} đồng</h4>
-                  <p>{item.description}</p>
-                  <h4 className="count">Đang sở hữu: {itemOwned[item.id] || 0}</h4>
-                  <div className='use'>
-                    <a>Mua</a>
-                  </div>
+            <div className='shop-container'>
+              <h3>Cửa hàng</h3>
+              
+              {buySuccess && (
+                <div className={`buy-message ${buySuccess.success ? 'success' : 'error'}`}>
+                  {buySuccess.success 
+                    ? `Đã mua ${buySuccess.item} với giá ${buySuccess.price} đồng.` 
+                    : `Không đủ tiền để mua ${buySuccess.item} (cần ${buySuccess.price} đồng).`}
                 </div>
-              ))}
+              )}
+              
+              <div className='shop-grid'>
+                <div className='shop-row'>
+                  {items.slice(0, 3).map(item => (
+                    <div 
+                      className={`shop-item ${props.player.coins < item.price ? 'disabled' : ''}`} 
+                      key={item.id}
+                      onClick={() => buy(item.id)}
+                    >
+                      <div className="shop-item-image">
+                        <img src={item.image} alt={item.name} />
+                      </div>
+                      <h4>{item.name}</h4>
+                      <p className="price">{item.price} đồng</p>
+                      <p className="description">{item.description}</p>
+                      <div className="item-count">Đang sở hữu: {itemOwned[item.id] || 0}</div>
+                      <button 
+                        className="buy-button"
+                        disabled={props.player.coins < item.price}
+                      >
+                        Mua
+                      </button>
+                    </div>
+                  ))}
+                </div>
+                <div className='shop-row'>
+                  {items.slice(3).map(item => (
+                    <div 
+                      className={`shop-item ${props.player.coins < item.price ? 'disabled' : ''}`} 
+                      key={item.id}
+                      onClick={() => buy(item.id)}
+                    >
+                      <div className="shop-item-image">
+                        <img src={item.image} alt={item.name} />
+                      </div>
+                      <h4>{item.name}</h4>
+                      <p className="price">{item.price} đồng</p>
+                      <p className="description">{item.description}</p>
+                      <div className="item-count">Đang sở hữu: {itemOwned[item.id] || 0}</div>
+                      <button 
+                        className="buy-button"
+                        disabled={props.player.coins < item.price}
+                      >
+                        Mua
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           ) : (
             <div className='shop-closed'>
@@ -289,13 +358,14 @@ function PlayerMenu(props) {
               <p>Hãy quay lại vào ngày 0, 3, 6, ...</p>
             </div>
           )}
-        </div>
+        </>
       )}
       
       {activeTab === 'trade' && (
         <Trade player={props.player} back={() => setActiveTab('info')} />
       )}
       
+      {/* Nút quay lại */}
       <button className="back-button" onClick={props.back}>
         Quay lại
       </button>

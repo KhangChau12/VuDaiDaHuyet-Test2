@@ -14,8 +14,17 @@ function Card(props) {
     player.frustration > 0 ? 'frustrated' : ''
   ].filter(Boolean).join(' ');
 
+  // Đảm bảo sự kiện click được kích hoạt đúng
+  const handleClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (props.seeMenu) {
+      props.seeMenu();
+    }
+  };
+
   return (
-    <div className={cardClasses} onClick={props.seeMenu}>
+    <div className={cardClasses} onClick={handleClick}>
       <div className='background-card'>
         <img src={cardImage} alt={player.role} />
         {/* Hiển thị thẻ Say Rượu nếu người chơi đang say */}
