@@ -18,6 +18,7 @@ function Day({ date, onEnd }) {
   const filterRef = useRef(null);
   const playerContRef = useRef(null);
   const dayRef = useRef(null);
+  const eventRef = useRef(null);
 
   const { currentEvent, executionPhase, setGameOver } = useGameContext();
   const { players } = usePlayerContext();
@@ -46,6 +47,7 @@ function Day({ date, onEnd }) {
     setTimeout(() => {
       title.style.marginTop = '-50%';
       title.style.opacity = '0';
+      const event = eventRef.current;
 
       setTimeout(() => {
         title.style.display = 'none';
@@ -53,6 +55,7 @@ function Day({ date, onEnd }) {
         filter.style.opacity = '1';
         playerCont.style.opacity = '1';
         dayControl.style.opacity = '1';
+        event.style.opacity = '1';
       }, 1000);
     }, 1000);
   }, []);
@@ -142,7 +145,7 @@ function Day({ date, onEnd }) {
 
       {/* Event messages */}
       {eventMessages.length > 0 && (
-        <div className="event-messages">
+        <div className="event-messages" ref={eventRef}>
           {eventMessages.map((message, index) => (
             <p key={index}>{message}</p>
           ))}

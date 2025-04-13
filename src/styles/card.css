@@ -46,6 +46,32 @@
     height: 35%;
     display: flex;
     justify-content: space-between;
+    align-items: center;
+}
+
+.card .player-info .stat span {
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card .player-info .stat img {
+    height: 100%;
+    animation: glow 2s ease-in-out infinite;
+    filter: drop-shadow(0 0 5px var(--brown-text));
+}
+
+@keyframes glow {
+    0% {
+        filter: drop-shadow(0 0 5px var(--brown-text));
+    }
+    50% {
+        filter: drop-shadow(0 0 15px var(--brown-text));
+    }
+    100% {
+        filter: drop-shadow(0 0 5px var(--brown-text));
+    }
 }
 
 .card .player-info p {

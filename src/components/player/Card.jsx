@@ -1,6 +1,11 @@
 import React from 'react';
 import "../../styles/card.css";
 import getPlayerImage from '../../assets/playerImages';
+import EpBuoc from '../../assets/icons/EpBuoc.svg';
+import SayRuou from '../../assets/icons/SayRuou.svg';
+import Tien from '../../assets/icons/Tien.svg';
+import UatUc1 from '../../assets/icons/UatUc1.svg';
+import UatUc2 from '../../assets/icons/UatUc2.svg';
 
 function Card(props) {
   const { player } = props;
@@ -35,11 +40,19 @@ function Card(props) {
       <div className='player-info'>
         <div className='stat'>
           {/* Hiển thị số tiền */}
-          <span className="coin-count">{player.coins} đồng</span>
-          {/* Hiển thị điểm uất ức */}
-          {player.frustration > 0 && (
-            <span className="frustration-count">{player.frustration} uất ức</span>
-          )}
+          <span className="coin-count"><img src={Tien} alt="Tien" /> {player.coins}</span>
+          <span className="others">
+            {/* Hiển thị điểm uất ức */}
+            {player.frustration == 1 && (
+              <span className="frustration-count"><img src={UatUc1} alt="UatUc1" /></span>
+            )}
+            {player.frustration == 2 && (
+              <span className="frustration-count"><img src={UatUc1} alt="UatUc2" /></span>
+            )}
+            {player.drunk && (
+              <span className="drunk"><img src={SayRuou} alt="SayRuou" /></span>
+            )}
+          </span>
         </div>
         <h3>{player.name}</h3>
         <p>{player.role}</p>
