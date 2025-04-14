@@ -52,11 +52,13 @@ function Night({ date, onEnd }) {
   const [animationComplete, setAnimationComplete] = useState(false);
   const [showDrunkEffects, setShowDrunkEffects] = useState(false);
   const [showBlackMarket, setShowBlackMarket] = useState(false);
-  const [blackMarketCompleted, setBlackMarketCompleted] = useState(false); // Thêm state mới
+  const [blackMarketCompleted, setBlackMarketCompleted] = useState(false);
   const [nightMessages, setNightMessages] = useState([]);
   const [protectedPlayerId, setProtectedPlayerId] = useState(null);
   const [playersToRemove, setPlayersToRemove] = useState([]);
   const [nightEnded, setNightEnded] = useState(false);
+  const [powerThemeOppressionTargets, setPowerThemeOppressionTargets] = useState([]);
+  const [baKienOppressionTarget, setBaKienOppressionTarget] = useState(null);
   
   // Kiểm tra điều kiện chiến thắng
   useEffect(() => {
@@ -87,7 +89,7 @@ function Night({ date, onEnd }) {
     
     // Khởi tạo thứ tự gọi nhân vật
     initNightSequence(alivePlayers);
-  }, [showBlackMarket, showDrunkEffects, blackMarketCompleted]); // Thêm blackMarketCompleted vào dependencies
+  }, [showBlackMarket, showDrunkEffects, blackMarketCompleted]);
 
   // Xử lý các tác động của điểm uất ức khi đêm kết thúc
   useEffect(() => {
@@ -105,11 +107,55 @@ function Night({ date, onEnd }) {
       }, 1000);
     }, 1000);
   }, []);
+
+  // Xử lý các hành động đàn áp vào cuối đêm
+  useEffect(() => {
+    if (nightEnded && !nightPhase.currentRole) {
+      // Xử lý đàn áp từ phe Quyền Thế
+      if (powerThemeOppressionTargets.length > 0) {
+        for (const targetId of powerThemeOppressionTargets) {
+          // Kiểm tra xem người này có được bảo vệ không
+          if (targetId !== protectedPlayerId) {
+            const target = players.find(p => p.id === targetId);
+            if (target) {
+              increaseFrustration(targetId, 1);
+              setNightMessages(prev => [...prev, `${target.name} bị đàn áp bởi phe Quyền Thế và tăng 1 điểm uất ức.`]);
+              checkAndUpdateRemovalList(targetId);
+            }
+          } else {
+            const target = players.find(p => p.id === targetId);
+            if (target) {
+              setNightMessages(prev => [...prev, `${target.name} được Lão Hạc bảo vệ khỏi bị đàn áp bởi phe Quyền Thế.`]);
+            }
+          }
+        }
+      }
+
+      // Xử lý đàn áp từ Bá Kiến
+      if (baKienOppressionTarget) {
+        const targetId = baKienOppressionTarget;
+        // Kiểm tra xem người này có được bảo vệ không
+        if (targetId !== protectedPlayerId) {
+          const target = players.find(p => p.id === targetId);
+          if (target) {
+            increaseFrustration(targetId, 1);
+            setNightMessages(prev => [...prev, `${target.name} bị đàn áp bởi Bá Kiến và tăng 1 điểm uất ức.`]);
+            checkAndUpdateRemovalList(targetId);
+          }
+        } else {
+          const target = players.find(p => p.id === targetId);
+          if (target) {
+            setNightMessages(prev => [...prev, `${target.name} được Lão Hạc bảo vệ khỏi bị đàn áp bởi Bá Kiến.`]);
+          }
+        }
+      }
+    }
+  }, [nightEnded, nightPhase.currentRole]);
   
   // Xử lý hoàn thành Chợ Đen
   const handleBlackMarketComplete = (messages) => {
     setShowBlackMarket(false);
-    setBlackMarketCompleted(true); // Đánh dấu chợ đen đã hoàn thành
+    setBlackMarketCompleted(true);
     if (messages && messages.length > 0) {
       setNightMessages([...nightMessages, ...messages]);
     }
@@ -208,33 +254,19 @@ function Night({ date, onEnd }) {
       
       case 'PowerTheme':
         if (action.type === 'oppress' && action.targetId) {
+          // Thay vì xử lý ngay, lưu lại người bị đàn áp để xử lý ở cuối đêm
+          setPowerThemeOppressionTargets([action.targetId]);
           const targetPlayer = players.find(p => p.id === action.targetId);
-          
-          if (targetPlayer && action.targetId !== protectedPlayerId) {
-            increaseFrustration(action.targetId, 1);
-            messages.push(`${targetPlayer.name} bị đàn áp bởi phe Quyền Thế và tăng 1 điểm uất ức.`);
-            
-            // Kiểm tra nếu người này đã tích lũy đủ 2 điểm uất ức
-            checkAndUpdateRemovalList(action.targetId);
-          } else if (targetPlayer && action.targetId === protectedPlayerId) {
-            messages.push(`${targetPlayer.name} được Lão Hạc bảo vệ khỏi đàn áp.`);
-          }
+          messages.push(`Phe Quyền Thế chọn đàn áp ${targetPlayer?.name}.`);
         }
         break;
       
       case 'Bá Kiến':
         if (action.type === 'oppress' && action.targetId) {
+          // Thay vì xử lý ngay, lưu lại người bị đàn áp để xử lý ở cuối đêm
+          setBaKienOppressionTarget(action.targetId);
           const targetPlayer = players.find(p => p.id === action.targetId);
-          
-          if (targetPlayer && action.targetId !== protectedPlayerId) {
-            increaseFrustration(action.targetId, 1);
-            messages.push(`${targetPlayer.name} bị đàn áp bởi Bá Kiến và tăng 1 điểm uất ức.`);
-            
-            // Kiểm tra nếu người này đã tích lũy đủ 2 điểm uất ức
-            checkAndUpdateRemovalList(action.targetId);
-          } else if (targetPlayer && action.targetId === protectedPlayerId) {
-            messages.push(`${targetPlayer.name} được Lão Hạc bảo vệ khỏi đàn áp.`);
-          }
+          messages.push(`Bá Kiến chọn đàn áp ${targetPlayer?.name}.`);
         }
         break;
       
