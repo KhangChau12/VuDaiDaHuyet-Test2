@@ -130,7 +130,7 @@ function playerReducer(state, action) {
         ...state,
         players: state.players.map(player => 
           player.id === action.payload 
-            ? { ...player, drunk: false }
+            ? { ...player, drunk: false, wine: Math.max(player.wine - 1, 0) }
             : player
         )
       };
@@ -261,6 +261,7 @@ export function PlayerProvider({ children }) {
   
   const setDrunk = (playerId) => {
     dispatch({ type: ACTIONS.SET_DRUNK, payload: playerId });
+    console.log(state.players);
   };
   
   const unsetDrunk = (playerId) => {

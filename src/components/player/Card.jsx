@@ -14,7 +14,7 @@ function Card(props) {
   // Xác định các class CSS dựa trên trạng thái
   const cardClasses = [
     'card',
-    player.drunk ? 'drunk' : '',
+    player.wine > 0 ? 'drunk' : '',
     player.shutup ? 'muted' : '',
     player.frustration > 0 ? 'frustrated' : ''
   ].filter(Boolean).join(' ');
@@ -23,20 +23,18 @@ function Card(props) {
   const handleClick = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    if (props.seeMenu) {
+    if (props.seeMenu && player.alive) {
       props.seeMenu();
     }
   };
 
   return (
     <div className={cardClasses} style={{position: 'relative'}} onClick={handleClick}>
-      {player.wine > 0 && <div className='wine-overlay'></div>}
       <div className='background-card'>
         <img src={cardImage} alt={player.role} />
         {/* Hiển thị thẻ Say Rượu nếu người chơi đang say */}
-        {player.drunk && <div className="drunk-overlay">Say rượu</div>}
-        {/* Hiển thị thẻ Ép buộc nếu người chơi đang bị ép buộc */}
-        {player.shutup && <div className="muted-overlay">Bị ép buộc</div>}
+        {player.wine > 0 && <div className="drunk-overlay"></div>}
+        {!player.alive && <div className='dead-overlay'></div>}
       </div>
       <div className='player-info'>
         <div className='stat'>

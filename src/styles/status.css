@@ -2,274 +2,275 @@
 
 /* Say rượu */
 .card.drunk .background-card {
-    position: relative;
-  }
-  
-  .card.drunk .background-card:after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(255, 0, 0, 0.2);
-    border-radius: 20px 20px 0 0;
-  }
-  
-  .drunk-overlay {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background-color: rgba(255, 0, 0, 0.7);
-    color: white;
-    text-align: center;
-    padding: 3px 0;
-    font-size: 12px;
-    font-weight: bold;
-  }
-  
-  /* Bị ép buộc */
-  .card.muted .background-card {
-    position: relative;
-  }
-  
-  .card.muted .background-card:after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.3);
-    border-radius: 20px 20px 0 0;
-  }
-  
-  .muted-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
-    color: white;
-    text-align: center;
-    padding: 3px 0;
-    font-size: 12px;
-    font-weight: bold;
-  }
-  
-  /* Uất ức */
-  .card.frustrated {
-    box-shadow: 0 0 10px rgba(255, 165, 0, 0.7);
-  }
-  
-  .frustration-count {
-    background-color: #ff9800;
-    color: white;
-    padding: 2px 6px;
-    border-radius: 10px;
-    font-size: 12px;
-    font-weight: bold;
-  }
-  
-  /* Số tiền */
-  .coin-count {
-    background-color: #4caf50;
-    color: white;
-    padding: 2px 6px;
-    border-radius: 10px;
-    font-size: 12px;
-    font-weight: bold;
-  }
-  
-  /* Menu tabs */
-  .menu-tabs {
-    display: flex;
-    width: 90%;
-    margin-bottom: 15px;
-    background-color: var(--brown-menu);
-    border-radius: 10px 10px 0 0;
-    overflow: hidden;
-  }
-  
-  .menu-tab {
-    flex: 1;
-    text-align: center;
-    padding: 10px;
-    background-color: var(--brown-menu);
-    color: var(--brown-text-opacity);
-    cursor: pointer;
-    transition: all 0.3s;
-  }
-  
-  .menu-tab.active {
-    background-color: var(--brown-text);
-    color: var(--brown-menu);
-    font-weight: bold;
-  }
-  
-  /* Player details */
-  .player-details {
-    width: 90%;
-    background-color: var(--brown-menu);
-    border-radius: 10px;
-    padding: 15px;
-    margin-bottom: 20px;
-  }
-  
-  .player-details h3 {
-    margin-top: 0;
-    margin-bottom: 15px;
-    text-align: center;
-  }
-  
-  .player-details p {
-    margin: 5px 0;
-  }
-  
-  .player-details ul {
-    margin: 5px 0;
-    padding-left: 20px;
-  }
-  
-  /* Player items */
-  .player-items {
-    width: 90%;
-    background-color: var(--brown-menu);
-    border-radius: 10px;
-    padding: 15px;
-    margin-bottom: 20px;
-  }
-  
-  .player-items h3 {
-    margin-top: 0;
-    margin-bottom: 15px;
-    text-align: center;
-  }
-  
-  .item-list {
-    display: flex;
-    overflow-x: auto;
-    gap: 10px;
-    padding-bottom: 10px;
-  }
-  
-  /* Shop */
-  .shop-closed {
-    width: 90%;
-    background-color: var(--brown-menu);
-    border-radius: 10px;
-    padding: 20px;
-    text-align: center;
-  }
-  
-  .shop-closed h3 {
-    margin-top: 0;
-    margin-bottom: 10px;
-  }
-  
-  /* Use item */
-  .use-item {
-    width: 90%;
-    background-color: var(--brown-menu);
-    border-radius: 10px;
-    padding: 15px;
-    margin-bottom: 20px;
-  }
-  
-  .use-item h3 {
-    margin-top: 0;
-    margin-bottom: 10px;
-    text-align: center;
-  }
-  
-  .target-list {
-    margin: 15px 0;
-    max-height: 200px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  
-  .target-option {
-    background-color: rgba(207, 175, 119, 0.2);
-    border: 1px solid var(--brown-text-opacity);
-    border-radius: 8px;
-    padding: 8px 12px;
-    cursor: pointer;
-    transition: all 0.3s;
-  }
-  
-  .target-option:hover {
-    background-color: rgba(207, 175, 119, 0.4);
-  }
-  
-  .target-option.selected {
-    background-color: var(--brown-text);
-    color: var(--brown-menu);
-  }
-  
-  .action-buttons {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 15px;
-  }
-  
-  .action-buttons button {
-    background-color: var(--brown-text);
-    color: var(--brown-menu);
-    border: none;
-    border-radius: 8px;
-    padding: 8px 15px;
-    cursor: pointer;
-    transition: all 0.3s;
-  }
-  
-  .action-buttons button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-  
-  /* Use result */
-  .use-result {
-    width: 90%;
-    background-color: var(--brown-menu);
-    border-radius: 10px;
-    padding: 15px;
-    margin-bottom: 20px;
-    text-align: center;
-  }
-  
-  .use-result h3 {
-    margin-top: 0;
-    margin-bottom: 10px;
-  }
-  
-  .use-result button {
-    background-color: var(--brown-text);
-    color: var(--brown-menu);
-    border: none;
-    border-radius: 8px;
-    padding: 8px 15px;
-    margin-top: 15px;
-    cursor: pointer;
-    transition: all 0.3s;
-  }
-  
-  /* Back button */
-  .back-button {
-    background-color: var(--brown-text);
-    color: var(--brown-menu);
-    border: none;
-    border-radius: 10px;
-    padding: 10px 20px;
-    margin-top: 20px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: all 0.3s;
-  }
-  
-  .back-button:hover {
-    background-color: #a0894d;
-  }
+  position: relative;
+}
+
+.card.drunk .background-card:after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 0, 0, 0.2);
+  border-radius: 20px 20px 0 0;
+}
+
+.drunk-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: rgba(255, 0, 0, 0.7);
+  color: white;
+  text-align: center;
+  padding: 3px 0;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* Bị ép buộc */
+.card.muted .background-card {
+  position: relative;
+}
+
+.card.muted .background-card:after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 20px 20px 0 0;
+}
+
+.muted-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  text-align: center;
+  padding: 3px 0;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* Uất ức */
+.card.frustrated {
+  box-shadow: 0 0 10px rgba(255, 165, 0, 0.7);
+}
+
+.frustration-count {
+  background-color: #ff9800;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* Số tiền */
+.coin-count {
+  background-color: #4caf50;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* Menu tabs */
+.menu-tabs {
+  display: flex;
+  width: 90%;
+  margin-bottom: 15px;
+  background-color: var(--brown-menu);
+  border-radius: 10px 10px 0 0;
+  overflow: hidden;
+}
+
+.menu-tab {
+  flex: 1;
+  text-align: center;
+  padding: 10px;
+  background-color: var(--brown-menu);
+  color: var(--brown-text-opacity);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.menu-tab.active {
+  background-color: var(--brown-text);
+  color: var(--brown-menu);
+  font-weight: bold;
+}
+
+/* Player details */
+.player-details {
+  width: 90%;
+  background-color: var(--brown-menu);
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.player-details h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.player-details p {
+  margin: 5px 0;
+}
+
+.player-details ul {
+  margin: 5px 0;
+  padding-left: 20px;
+}
+
+/* Player items */
+.player-items {
+  width: 90%;
+  background-color: var(--brown-menu);
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.player-items h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.item-list {
+  display: flex;
+  overflow-x: auto;
+  gap: 10px;
+  padding-bottom: 10px;
+}
+
+/* Shop */
+.shop-closed {
+  width: 90%;
+  background-color: var(--brown-menu);
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+}
+
+.shop-closed h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+/* Use item */
+.use-item {
+  width: 90%;
+  background-color: var(--brown-menu);
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.use-item h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.target-list {
+  margin: 15px 0;
+  max-height: 200px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.target-option {
+  background-color: rgba(207, 175, 119, 0.2);
+  border: 1px solid var(--brown-text-opacity);
+  border-radius: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.target-option:hover {
+  background-color: rgba(207, 175, 119, 0.4);
+}
+
+.target-option.selected {
+  background-color: var(--brown-text);
+  color: var(--brown-menu);
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+
+.action-buttons button {
+  background-color: var(--brown-text);
+  color: var(--brown-menu);
+  border: none;
+  border-radius: 8px;
+  padding: 8px 15px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.action-buttons button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Use result */
+.use-result {
+  width: 90%;
+  background-color: var(--brown-menu);
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.use-result h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.use-result button {
+  background-color: var(--brown-text);
+  color: var(--brown-menu);
+  border: none;
+  border-radius: 8px;
+  padding: 8px 15px;
+  margin-top: 15px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+/* Back button */
+.back-button {
+  background-color: var(--brown-text);
+  color: var(--brown-menu);
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  margin-top: 20px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s;
+}
+
+.back-button:hover {
+  background-color: #a0894d;
+}

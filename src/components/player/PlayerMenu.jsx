@@ -106,7 +106,7 @@ function PlayerMenu(props) {
     switch (itemToUse) {
       case 'Rượu Đế':
         // Đặt thẻ Say Rượu
-        if (targetPlayer.alive && !targetPlayer.drunk) {
+        if (targetPlayer.alive) {
           setDrunk(targetPlayer.id);
           removeItem(updatedPlayer.id, 'Rượu Đế');
           setUseResult({ success: true, message: `Đã đặt thẻ Say Rượu lên ${targetPlayer.name}.` });
@@ -117,7 +117,7 @@ function PlayerMenu(props) {
 
       case 'Cháo Hành':
         // Loại bỏ thẻ Say Rượu
-        if (targetPlayer.alive && targetPlayer.drunk) {
+        if (targetPlayer.alive && targetPlayer.wine > 0) {
           unsetDrunk(targetPlayer.id);
           removeItem(updatedPlayer.id, 'Cháo Hành');
           setUseResult({ success: true, message: `Đã loại bỏ thẻ Say Rượu khỏi ${targetPlayer.name}.` });
@@ -165,7 +165,7 @@ function PlayerMenu(props) {
     switch (itemToUse) {
       case 'Rượu Đế':
         // Chỉ những người còn sống và không say
-        return players.filter(p => p.alive && !p.drunk);
+        return players.filter(p => p.alive);
 
       case 'Cháo Hành':
         // Chỉ những người còn sống và đang say
@@ -242,10 +242,10 @@ function PlayerMenu(props) {
             <p><strong>Điểm uất ức:</strong> {updatedPlayer.frustration}</p>
             <p><strong>Điểm rượu:</strong> {updatedPlayer.wine}</p>
             <p><strong>Trạng thái:</strong>
-              {updatedPlayer.drunk && updatedPlayer.shutup && 'Đang say rượu và bị ép buộc'}
-              {updatedPlayer.drunk && !updatedPlayer.shutup && 'Đang say rượu'}
-              {updatedPlayer.shutup && !updatedPlayer.drunk && 'Đang bị ép buộc'}
-              {!updatedPlayer.drunk && !updatedPlayer.shutup && 'Bình thường'}
+              {updatedPlayer.wine > 0 && updatedPlayer.shutup && 'Đang say rượu và bị ép buộc'}
+              {updatedPlayer.wine > 0 && !updatedPlayer.shutup && 'Đang say rượu'}
+              {updatedPlayer.shutup && !updatedPlayer.wine > 0 && 'Đang bị ép buộc'}
+              {!updatedPlayer.wine > 0 && !updatedPlayer.shutup && 'Bình thường'}
             </p>
           </div>
         )}
@@ -261,9 +261,9 @@ function PlayerMenu(props) {
                     <h3>{item}</h3>
                     <p>{items.find(i => i.id === item)?.description}</p>
                     <h4 className="count">Số lượng: {count}</h4>
-                    <div className='use' onClick={() => useItem(item)}>
+                    {item !== 'Hồi Hương' && <div className='use' onClick={() => useItem(item)}>
                       <a>Sử dụng</a>
-                    </div>
+                    </div>}
                   </div>
                 )
               ))}

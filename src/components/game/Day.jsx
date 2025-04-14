@@ -205,11 +205,11 @@ function Day({ date, onEnd }) {
       </div>
 
       {/* Event messages */}
-      <div className="event-messages" ref={eventRef} style={{opacity: eventMessages.length > 0 ? 1 : 0}}>
+      {eventMessages.length > 0 && <div className="event-messages" ref={eventRef} style={{opacity: eventMessages.length > 0 ? 1 : 0}}>
         {eventMessages.map((message, index) => (
           <p key={index}>{message}</p>
         ))}
-      </div>
+      </div>}
 
       {/* Filter buttons */}
       <div className="player-filters" ref={filterRef}>

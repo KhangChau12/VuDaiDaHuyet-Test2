@@ -34,8 +34,6 @@ class Player {
             ].includes(role)
         ) {
             return "Công Lý";
-        } else if (role === "Đội Tảo") {
-            return "Đội Tảo";
         } else {
             return "Lang Thang";
         }
@@ -71,14 +69,6 @@ class Player {
 
     unmute() {
         this.shutup = false;
-    }
-
-    chosenDrunk() {
-        this.drunk = true;
-    }
-
-    undrunk() {
-        this.drunk = false;
     }
 
     kill() {
