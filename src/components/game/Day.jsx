@@ -1,8 +1,13 @@
-// File: src/components/game/Day.jsx
+// File: src/components/game/Day.jsx - Sửa toàn bộ file
 
 import React, { useEffect, useState, useRef } from 'react'
 import "../../styles/home.css"
 import "../../styles/form.css"
+
+import QuyenThe from "../../assets/team/Logo phe Quyền Thế.svg";
+import CongLy from "../../assets/team/Logo phe Công Lý.svg";
+import DoiTao from "../../assets/team/Logo phe Đội Tảo.svg";
+import LangThang from "../../assets/team/Logo phe Lang Thang.svg";
 
 import background from "../../assets/background_day.jpg";
 import Card from '../player/Card';
@@ -10,9 +15,6 @@ import PlayerMenu from '../player/PlayerMenu';
 import { useGameContext } from '../../context/GameContext';
 import { usePlayerContext } from '../../context/PlayerContext';
 import Execution from './Events/Execution';
-import MarketDay from './Events/MarketDay';
-import HarvestDay from './Events/HarvestDay';
-import WineParty from './Events/WineParty';
 import { checkAllVictoryConditions } from '../../services/victoryConditions';
 
 function Day({ date, onEnd }) {
@@ -24,18 +26,19 @@ function Day({ date, onEnd }) {
   const eventRef = useRef(null);
 
   const { currentEvent, executionPhase, setGameOver } = useGameContext();
-  const { players, addCoins } = usePlayerContext();
+  const { players } = usePlayerContext();
 
   const [filterTeam, setFilterTeam] = useState('all');
   const [playerToSee, setPlayerToSee] = useState(null);
   const [showExecution, setShowExecution] = useState(false);
   const [eventMessages, setEventMessages] = useState([]);
-  
-  // State mới để quản lý việc hiển thị các sự kiện
-  const [showHarvestEvent, setShowHarvestEvent] = useState(false);
-  const [showMarketEvent, setShowMarketEvent] = useState(false);
-  const [showWineEvent, setShowWineEvent] = useState(false);
-  const [regularDayProcessed, setRegularDayProcessed] = useState(false);
+
+  const teamImage = {
+    'Quyền Thế': QuyenThe,
+    'Công Lý': CongLy,
+    'Đội Tảo': DoiTao,
+    'Lang Thang': LangThang
+  }
 
   // Kiểm tra điều kiện chiến thắng
   useEffect(() => {
@@ -69,36 +72,24 @@ function Day({ date, onEnd }) {
     }, 1000);
   }, []);
 
-  // Event management and money distribution
+  // Event management
   useEffect(() => {
-    // Xử lý sự kiện và phân phối tiền khi chuyển sang ngày mới
+    // Xử lý sự kiện khi chuyển sang ngày mới
     if (currentEvent === 'harvest') {
-      setShowHarvestEvent(true);
       setEventMessages([...eventMessages, 'Ngày Thu Hoạch: Phe Công Lý và Lang Thang nhận 2 đồng, phe Quyền Thế nhận 1 đồng.']);
     } else if (currentEvent === 'market') {
-      setShowMarketEvent(true);
       setEventMessages([...eventMessages, 'Ngày Chợ Phiên: Mọi người có thể mua thẻ Hành Động từ Menu của nhân vật.']);
     } else if (currentEvent === 'wine') {
-      setShowWineEvent(true);
       setEventMessages([...eventMessages, 'Tiệc Rượu: 3 người ngẫu nhiên sẽ nhận thẻ Say Rượu.']);
-    } else if (!regularDayProcessed) {
-      // Ngày thường - phân phối 1 đồng cho mỗi người chơi
-      players.forEach(player => {
-        if (player.alive) {
-          addCoins(player.id, 1);
-        }
-      });
-      setEventMessages([...eventMessages, 'Ngày thường: Mỗi người nhận được 1 đồng.']);
-      setRegularDayProcessed(true);
     }
     
     // Hiển thị execution phase sau một khoảng thời gian nếu cần
-    if (executionPhase.canExecute && !showExecution) {
+    if (executionPhase.canExecute) {
       setTimeout(() => {
         setShowExecution(true);
       }, 3000);
     }
-  }, [currentEvent, players]);
+  }, [currentEvent]);
 
   // Function to filter players by team
   const getFilteredPlayers = () => {
@@ -128,14 +119,8 @@ function Day({ date, onEnd }) {
 
   // Function to handle event completion
   const handleEventComplete = (messages) => {
-    // Reset event display states
-    setShowHarvestEvent(false);
-    setShowMarketEvent(false);
-    setShowWineEvent(false);
     setShowExecution(false);
-    
-    // Update messages
-    if (messages && messages.length > 0) {
+    if (messages) {
       setEventMessages([...eventMessages, ...messages]);
     }
   };
@@ -172,7 +157,7 @@ function Day({ date, onEnd }) {
 
       {/* Event messages */}
       {eventMessages.length > 0 && (
-        <div className="event-messages" ref={eventRef} style={{opacity: 1}}>
+        <div className="event-messages" ref={eventRef}>
           {eventMessages.map((message, index) => (
             <p key={index}>{message}</p>
           ))}
@@ -220,7 +205,7 @@ function Day({ date, onEnd }) {
           Object.entries(groupedPlayers).map(([team, teamPlayers]) => (
             teamPlayers.length > 0 && (
               <div key={team} className="team-section">
-                <h3 className="team-title">{team}</h3>
+                <h3 className="team-title"><img src={teamImage[team]} alt={team} />{team}</h3>
                 <div id="player_list">
                   {teamPlayers.map((player) => (
                     <Card
@@ -260,10 +245,7 @@ function Day({ date, onEnd }) {
         </div>
       }
 
-      {/* Event components */}
-      {showHarvestEvent && <HarvestDay onComplete={handleEventComplete} />}
-      {showMarketEvent && <MarketDay onComplete={handleEventComplete} />}
-      {showWineEvent && <WineParty onComplete={handleEventComplete} />}
+      {/* Execution component */}
       {showExecution && <Execution onComplete={handleEventComplete} />}
 
       {/* Game controls */}
@@ -271,7 +253,7 @@ function Day({ date, onEnd }) {
         <button
           className="next-phase-btn"
           onClick={onEnd}
-          disabled={showExecution || showHarvestEvent || showMarketEvent || showWineEvent}
+          disabled={showExecution}
         >
           Bắt đầu đêm {date + 1}
         </button>
