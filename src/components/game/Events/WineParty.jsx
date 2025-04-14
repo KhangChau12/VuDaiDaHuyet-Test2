@@ -9,18 +9,18 @@ function WineParty({ onComplete }) {
   const { players, setDrunk, increaseWine } = usePlayerContext();
   const [selectedPlayers, setSelectedPlayers] = useState([]);
   const [distribution, setDistribution] = useState([]);
-  const [isRandom, setIsRandom] = useState(true);
+  const [isRandom, setIsRandom] = useState(false); // Thay đổi thành false để mặc định là chọn thủ công
   const [isComplete, setIsComplete] = useState(false);
 
   // Danh sách người chơi còn sống
   const alivePlayers = players.filter(player => player.alive);
 
-  // Tự động chọn ngẫu nhiên 3 người khi component được mount
+  // Tự động chọn ngẫu nhiên 3 người khi component được mount và isRandom = true
   useEffect(() => {
     if (isRandom) {
       randomizeWineDistribution();
     }
-  }, []);
+  }, [isRandom]);
 
   // Chọn ngẫu nhiên 3 người
   const randomizeWineDistribution = () => {
@@ -98,31 +98,23 @@ function WineParty({ onComplete }) {
     onComplete(distribution);
   };
 
-  // Chuyển đổi giữa chọn ngẫu nhiên và thủ công
-  const toggleMode = () => {
-    if (isComplete) return;
-    
-    setIsRandom(!isRandom);
-    setSelectedPlayers([]);
-  };
-
   return (
     <div className="event-overlay">
       <div className="event-container wine-party">
         <h2>Tiệc Rượu</h2>
-        <p>Ba người ngẫu nhiên sẽ nhận thẻ Say Rượu.</p>
+        <p>Ba người sẽ nhận thẻ Say Rượu.</p>
         
         {!isComplete && (
           <div className="selection-mode">
             <button 
               className={`mode-button ${isRandom ? 'active' : ''}`}
-              onClick={() => toggleMode()}
+              onClick={() => setIsRandom(true)}
             >
               Chọn ngẫu nhiên
             </button>
             <button 
               className={`mode-button ${!isRandom ? 'active' : ''}`}
-              onClick={() => toggleMode()}
+              onClick={() => setIsRandom(false)}
             >
               Chọn thủ công
             </button>
@@ -142,7 +134,7 @@ function WineParty({ onComplete }) {
         
         {!isComplete && !isRandom && (
           <div className="manual-selection">
-            <p>Chọn tối đa 3 người để nhận thẻ Say Rượu:</p>
+            <p>Chọn 3 người để nhận thẻ Say Rượu:</p>
             <div className="player-list">
               {alivePlayers.map(player => (
                 <div 
