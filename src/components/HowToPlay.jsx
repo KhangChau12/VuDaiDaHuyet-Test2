@@ -26,7 +26,7 @@ function Instruction({ back }) {
         </div>
         <h1>Hướng dẫn sử dụng</h1>
         <div id='container'>
-            <div class="content">
+            <div className="content">
                 <h2>Mục đích</h2>
                 <p>Ứng dụng này giúp Hướng Sư (quản trò) điều hành board game "Vũ Đại Dạ Huyết" để dễ dàng hơn.</p>
 
