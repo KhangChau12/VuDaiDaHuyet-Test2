@@ -16,6 +16,7 @@ function Drunk({ onComplete }) {
   useEffect(() => {
     // Tìm những người đang bị say rượu
     const drunk = players.filter(player => player.drunk);
+    console.log(drunk);
     setDrunkPlayers(drunk);
     
     // Tìm Chí Phèo

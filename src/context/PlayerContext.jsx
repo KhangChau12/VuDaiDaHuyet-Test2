@@ -261,7 +261,6 @@ export function PlayerProvider({ children }) {
   
   const setDrunk = (playerId) => {
     dispatch({ type: ACTIONS.SET_DRUNK, payload: playerId });
-    console.log(state.players);
   };
   
   const unsetDrunk = (playerId) => {

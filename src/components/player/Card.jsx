@@ -14,7 +14,7 @@ function Card(props) {
   // Xác định các class CSS dựa trên trạng thái
   const cardClasses = [
     'card',
-    player.wine > 0 ? 'drunk' : '',
+    player.drunk ? 'drunk' : '',
     player.shutup ? 'muted' : '',
     player.frustration > 0 ? 'frustrated' : ''
   ].filter(Boolean).join(' ');
@@ -33,7 +33,7 @@ function Card(props) {
       <div className='background-card'>
         <img src={cardImage} alt={player.role} />
         {/* Hiển thị thẻ Say Rượu nếu người chơi đang say */}
-        {player.wine > 0 && <div className="drunk-overlay"></div>}
+        {player.drunk && <div className="drunk-overlay"></div>}
         {!player.alive && <div className='dead-overlay'></div>}
       </div>
       <div className='player-info'>
@@ -48,7 +48,7 @@ function Card(props) {
             {player.frustration == 2 && (
               <span className="frustration-count"><img src={UatUc1} alt="UatUc2" /></span>
             )}
-            {player.wine > 0 && (
+            {player.drunk && (
               <span className="drunk">{player.wine} <img src={SayRuou} alt="SayRuou" /></span>
             )}
           </span>
