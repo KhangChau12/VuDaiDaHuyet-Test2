@@ -196,7 +196,7 @@ function Character(props) {
                     <h2>Dân thường</h2>
                     <div className="civilian-controls">
                         <button className="civilian-btn add" onClick={addCivilian}>+</button>
-                        <button className="civilian-btn remove" onClick={removeCivilian} disabled={civilianCount < 1}>-</button>
+                        <button className="civilian-btn remove" style={{marginTop: '-3px'}} onClick={removeCivilian} disabled={civilianCount < 1}>-</button>
                     </div>
                 </div>
                 <div className="civilians-section">
