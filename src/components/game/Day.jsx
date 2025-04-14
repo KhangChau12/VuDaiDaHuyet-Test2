@@ -152,8 +152,8 @@ function Day({ date, onEnd }) {
 
   // Function to filter players by team
   const getFilteredPlayers = () => {
-    if (filterTeam === 'all') return players.filter(p => p.alive);
-    return players.filter(player => player.team === filterTeam && player.alive);
+    if (filterTeam === 'all') return players;
+    return players.filter(player => player.team === filterTeam);
   };
 
   // Group players by team for better organization
@@ -161,12 +161,11 @@ function Day({ date, onEnd }) {
     const teams = {
       'Quyền Thế': [],
       'Công Lý': [],
-      'Đội Tảo': [],
       'Lang Thang': []
     };
 
     players.forEach(player => {
-      if (player.alive && teams[player.team]) {
+      if (teams[player.team]) {
         teams[player.team].push(player);
       }
     });
