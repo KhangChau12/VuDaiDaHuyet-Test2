@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import "../../styles/home.css"
 
-import background from "../../assets/image.png";
+import background from "../../assets/image.jpg";
 import { useGameContext } from '../../context/GameContext'
 import { usePlayerContext } from '../../context/PlayerContext'
 import { getNightActionPrompt } from '../../utils/nightSequence'

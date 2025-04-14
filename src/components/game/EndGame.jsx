@@ -1,6 +1,6 @@
 import React from 'react';
 import "../../styles/home.css";
-import background from "../../assets/image.png";
+import background from "../../assets/image.jpg";
 
 function EndGame({ winner }) {
   // Map các phe với thông điệp chiến thắng

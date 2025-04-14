@@ -4,7 +4,7 @@ import React, { useEffect, useState, useRef } from 'react'
 import "../../styles/home.css"
 import "../../styles/form.css"
 
-import background from "../../assets/background_day.png";
+import background from "../../assets/background_day.jpg";
 import Card from '../player/Card';
 import PlayerMenu from '../player/PlayerMenu';
 import { useGameContext } from '../../context/GameContext';

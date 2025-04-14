@@ -3,7 +3,7 @@ import { usePlayerContext } from '../../../context/PlayerContext';
 import '../../../styles/events.css';
 
 // Thêm asset cho thẻ Say Rượu nếu có
-import Ruou from "../../../assets/shop/RuouDe.png";
+import Ruou from "../../../assets/shop/RuouDe.jpg";
 
 function WineParty({ onComplete }) {
   const { players, setDrunk, increaseWine } = usePlayerContext();

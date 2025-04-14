@@ -4,7 +4,7 @@ import '../../styles/events.css';
 import { handleChiPheoWine } from '../../services/gameLogic';
 
 // Import Rượu asset
-import Ruou from "../../assets/shop/RuouDe.png";
+import Ruou from "../../assets/shop/RuouDe.jpg";
 
 function Drunk({ onComplete }) {
   const { players, setDrunk, unsetDrunk, increaseWine, changeTeam } = usePlayerContext();

@@ -4,7 +4,7 @@ import "../../styles/form.css"
 
 import { Player } from "../../types/roles";
 
-import background from "../../assets/image.png";
+import background from "../../assets/image.jpg";
 
 function Character(props) {
     // State to track civilian count

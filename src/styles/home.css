@@ -218,6 +218,12 @@
 
 #game_title h2 {
     margin: 2vh 0;
+    color: var(--brown-text);
+    text-shadow: 
+        0 0 5px var(--brown-menu),
+        0 0 10px var(--brown-menu),
+        0 0 20px var(--brown-menu),
+        0 0 40px var(--brown-menu);
 }
 
 #player_cont {

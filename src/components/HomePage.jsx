@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import "../styles/home.css"
 
-import background from "../assets/image.png";
+import background from "../assets/image.jpg";
 import title from "../assets/title.png";
 
 function Home(props) {

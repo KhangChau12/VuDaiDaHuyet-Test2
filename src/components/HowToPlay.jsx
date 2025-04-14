@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import "../styles/home.css"
 
-import background from "../assets/image.png";
+import background from "../assets/image.jpg";
 import title from "../assets/horititle.png";
 
 function Instruction({ back }) {
@@ -42,7 +42,7 @@ function Instruction({ back }) {
                 <h2>Lưu ý</h2>
                 <p>Ứng dụng chỉ lưu trữ dữ liệu trong trình duyệt của bạn. Không đóng tab hoặc xóa dữ liệu trình duyệt nếu muốn giữ tiến trình.</p>
 
-                <a onClick={back} class="button">Quay lại màn hình chính</a>
+                <a onClick={back} className="button">Quay lại màn hình chính</a>
             </div>
         </div>
     </div>);

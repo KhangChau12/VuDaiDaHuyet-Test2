@@ -1,17 +1,17 @@
 // Nhập tất cả hình ảnh nhân vật
-import baKien from './player/Bá Kiến.png';
-import lyCuong from './player/Lý Cường.png';
-import baBa from './player/Bà Ba.png';
-import ongTuDam from './player/Lão Hạc.png';
-import thiNo from './player/Thị Nở.png';
-import anhHangXom from './player/Ông Giáo.png';
-import baCo from './player/Bà Cô của Thị Nở.png';
-import binhChuc from './player/Binh Chức.png';
-import danThuong from './player/Dân thường.png';
-import doiTao from './player/Đội Tảo.png';
-import chiPheo from './player/Chí Phèo.png';
-import tuLang from './player/Tự Lãng.png';
-import namTho from './player/Năm Thọ.png';
+import baKien from './player/Bá Kiến.jpg';
+import lyCuong from './player/Lý Cường.jpg';
+import baBa from './player/Bà Ba.jpg';
+import ongTuDam from './player/Lão Hạc.jpg';
+import thiNo from './player/Thị Nở.jpg';
+import anhHangXom from './player/Ông Giáo.jpg';
+import baCo from './player/Bà Cô của Thị Nở.jpg';
+import binhChuc from './player/Binh Chức.jpg';
+import danThuong from './player/Dân thường.jpg';
+import doiTao from './player/Đội Tảo.jpg';
+import chiPheo from './player/Chí Phèo.jpg';
+import tuLang from './player/Tự Lãng.jpg';
+import namTho from './player/Năm Thọ.jpg';
 
 // Tạo object map từ tên vai trò đến đường dẫn hình ảnh
 const playerImages = {

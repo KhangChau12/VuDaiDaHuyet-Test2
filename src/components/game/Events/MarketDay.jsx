@@ -6,9 +6,9 @@ import { ITEM_PRICES } from '../../../utils/gameHelpers';
 // Import assets
 import ChaoHanh from "../../../assets/shop/ChaoHanh.png";
 import HoiHuong from "../../../assets/shop/GanhOanTroVe.png";
-import GiaiAch from "../../../assets/shop/GiaiAch.png";
-import MinhOan from "../../../assets/shop/MinhOan.png";
-import Ruou from "../../../assets/shop/RuouDe.png";
+import GiaiAch from "../../../assets/shop/GiaiAch.jpg";
+import MinhOan from "../../../assets/shop/MinhOan.jpg";
+import Ruou from "../../../assets/shop/RuouDe.jpg";
 
 function MarketDay({ onComplete }) {
   const { players, addItem, removeCoins } = usePlayerContext();
