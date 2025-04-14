@@ -52,6 +52,7 @@ function Night({ date, onEnd }) {
   const [animationComplete, setAnimationComplete] = useState(false);
   const [showDrunkEffects, setShowDrunkEffects] = useState(false);
   const [showBlackMarket, setShowBlackMarket] = useState(false);
+  const [blackMarketCompleted, setBlackMarketCompleted] = useState(false); // Thêm state mới
   const [nightMessages, setNightMessages] = useState([]);
   const [protectedPlayerId, setProtectedPlayerId] = useState(null);
   const [playersToRemove, setPlayersToRemove] = useState([]);
@@ -70,8 +71,8 @@ function Night({ date, onEnd }) {
     // Lấy sự kiện của ngày tiếp theo
     const nextDayEvent = getEventByDay(date + 1);
     
-    // Nếu ngày tiếp theo là ngày Chợ Phiên, hiện Chợ Đen
-    if (nextDayEvent === 'market' && !showBlackMarket) {
+    // Nếu ngày tiếp theo là ngày Chợ Phiên, hiện Chợ Đen (chỉ khi chưa hoàn thành)
+    if (nextDayEvent === 'market' && !showBlackMarket && !blackMarketCompleted) {
       setShowBlackMarket(true);
       return;
     }
@@ -86,7 +87,7 @@ function Night({ date, onEnd }) {
     
     // Khởi tạo thứ tự gọi nhân vật
     initNightSequence(alivePlayers);
-  }, [showBlackMarket, showDrunkEffects]);
+  }, [showBlackMarket, showDrunkEffects, blackMarketCompleted]); // Thêm blackMarketCompleted vào dependencies
 
   // Xử lý các tác động của điểm uất ức khi đêm kết thúc
   useEffect(() => {
@@ -108,6 +109,7 @@ function Night({ date, onEnd }) {
   // Xử lý hoàn thành Chợ Đen
   const handleBlackMarketComplete = (messages) => {
     setShowBlackMarket(false);
+    setBlackMarketCompleted(true); // Đánh dấu chợ đen đã hoàn thành
     if (messages && messages.length > 0) {
       setNightMessages([...nightMessages, ...messages]);
     }
