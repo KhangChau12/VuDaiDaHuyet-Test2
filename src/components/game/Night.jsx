@@ -79,7 +79,7 @@ function Night({ date, onEnd }) {
     
     // Xử lý trạng thái say rượu trước
     const alivePlayers = players.filter(p => p.alive);
-    const drunkPlayerIds = processDrunkEffects(alivePlayers, unsetDrunk);
+    const drunkPlayerIds = processDrunkEffects(alivePlayers);
     if (drunkPlayerIds.length > 0 && !showDrunkEffects) {
       setShowDrunkEffects(true);
       return;
