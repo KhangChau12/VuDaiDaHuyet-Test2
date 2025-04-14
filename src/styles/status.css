@@ -12,21 +12,8 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(255, 0, 0, 0.3);
+  background-color: rgba(255, 0, 0, 0.2);
   border-radius: 20px 20px 0 0;
-  animation: wine 2s ease-in-out infinite;
-}
-
-@keyframes wine {
-  0% {
-    background-color: rgba(255, 0, 0, 0.3);
-  }
-  50% {
-    background-color: rgba(255, 0, 0, 0.5);
-  }
-  100% {
-    background-color: rgba(255, 0, 0, 0.3);
-  }
 }
 
 .drunk-overlay {

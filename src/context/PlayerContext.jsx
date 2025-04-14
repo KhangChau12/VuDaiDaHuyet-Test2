@@ -116,6 +116,15 @@ function playerReducer(state, action) {
       };
     
     case ACTIONS.SET_DRUNK:
+      console.log({
+        ...state,
+        players: state.players.map(player => 
+          player.id === action.payload 
+            ? { ...player, drunk: true, wine: Math.min(player.wine + 1, 3) }
+            : player
+        )
+      });
+    
       return {
         ...state,
         players: state.players.map(player => 

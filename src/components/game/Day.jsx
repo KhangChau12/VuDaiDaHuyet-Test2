@@ -303,6 +303,7 @@ function Day({ date, onEnd }) {
             // Reset trạng thái phân phối tiền khi chuyển sang đêm
             moneyDistributedRef.current = false;
             onEnd();
+            console.log(players);
           }}
           disabled={showExecution}
         >
