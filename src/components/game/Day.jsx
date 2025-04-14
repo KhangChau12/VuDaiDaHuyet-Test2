@@ -1,4 +1,4 @@
-// File: src/components/game/Day.jsx - Sửa toàn bộ file
+// File: src/components/game/Day.jsx
 
 import React, { useEffect, useState, useRef } from 'react'
 import "../../styles/home.css"
@@ -16,6 +16,7 @@ import { useGameContext } from '../../context/GameContext';
 import { usePlayerContext } from '../../context/PlayerContext';
 import Execution from './Events/Execution';
 import { checkAllVictoryConditions } from '../../services/victoryConditions';
+import { getEventByDay } from '../../services/eventManager';
 
 function Day({ date, onEnd }) {
   const titleRef = useRef(null);
@@ -24,9 +25,10 @@ function Day({ date, onEnd }) {
   const playerContRef = useRef(null);
   const dayRef = useRef(null);
   const eventRef = useRef(null);
+  const moneyDistributedRef = useRef(false);
 
   const { currentEvent, executionPhase, setGameOver } = useGameContext();
-  const { players } = usePlayerContext();
+  const { players, addCoins } = usePlayerContext();
 
   const [filterTeam, setFilterTeam] = useState('all');
   const [playerToSee, setPlayerToSee] = useState(null);
@@ -72,24 +74,71 @@ function Day({ date, onEnd }) {
     }, 1000);
   }, []);
 
-  // Event management
+  // Phân phối tiền và thiết lập thông báo khi component mount
   useEffect(() => {
-    // Xử lý sự kiện khi chuyển sang ngày mới
-    if (currentEvent === 'harvest') {
-      setEventMessages([...eventMessages, 'Ngày Thu Hoạch: Phe Công Lý và Lang Thang nhận 2 đồng, phe Quyền Thế nhận 1 đồng.']);
-    } else if (currentEvent === 'market') {
-      setEventMessages([...eventMessages, 'Ngày Chợ Phiên: Mọi người có thể mua thẻ Hành Động từ Menu của nhân vật.']);
-    } else if (currentEvent === 'wine') {
-      setEventMessages([...eventMessages, 'Tiệc Rượu: 3 người ngẫu nhiên sẽ nhận thẻ Say Rượu.']);
+    // Nếu đã phân phối tiền hoặc là ngày 0, không làm gì cả
+    if (moneyDistributedRef.current || date === 0) {
+      return;
     }
+
+    // Ngày 0 chỉ hiển thị thông báo
+    if (date === 0) {
+      if (currentEvent === 'market') {
+        setEventMessages(['Ngày Chợ Phiên: Mọi người có thể mua thẻ Hành Động từ Menu của nhân vật.']);
+      }
+      moneyDistributedRef.current = true;
+      return;
+    }
+
+    // Từ ngày 1 trở đi, phân phối tiền theo sự kiện
+    const eventType = getEventByDay(date);
+    const messages = [];
+
+    // Phân phối tiền dựa trên sự kiện
+    if (eventType === 'harvest') {
+      // Ngày Thu Hoạch: Phe Công Lý và Lang Thang nhận 2 đồng, phe Quyền Thế nhận 1 đồng
+      players.forEach(player => {
+        if (player.alive) {
+          if (player.team === 'Quyền Thế') {
+            addCoins(player.id, 1);
+          } else {
+            addCoins(player.id, 2);
+          }
+        }
+      });
+      messages.push('Ngày Thu Hoạch: Phe Công Lý và Lang Thang nhận 2 đồng, phe Quyền Thế nhận 1 đồng.');
+    } else {
+      // Ngày thường: Mọi người nhận 1 đồng
+      players.forEach(player => {
+        if (player.alive) {
+          addCoins(player.id, 1);
+        }
+      });
+      messages.push('Mọi người nhận 1 đồng.');
+    }
+
+    // Thêm thông báo về loại ngày
+    if (currentEvent === 'market') {
+      messages.push('Ngày Chợ Phiên: Mọi người có thể mua thẻ Hành Động từ Menu của nhân vật.');
+    } else if (currentEvent === 'wine') {
+      messages.push('Tiệc Rượu: 3 người ngẫu nhiên sẽ nhận thẻ Say Rượu.');
+    }
+
+    // Cập nhật thông báo
+    setEventMessages(messages);
     
-    // Hiển thị execution phase sau một khoảng thời gian nếu cần
+    // Đánh dấu đã phân phối tiền
+    moneyDistributedRef.current = true;
+  }, [date, currentEvent, players]);
+
+  // Hiển thị execution phase sau khi component mount nếu cần
+  useEffect(() => {
     if (executionPhase.canExecute) {
       setTimeout(() => {
         setShowExecution(true);
       }, 3000);
     }
-  }, [currentEvent]);
+  }, [executionPhase.canExecute]);
 
   // Function to filter players by team
   const getFilteredPlayers = () => {
@@ -121,7 +170,7 @@ function Day({ date, onEnd }) {
   const handleEventComplete = (messages) => {
     setShowExecution(false);
     if (messages) {
-      setEventMessages([...eventMessages, ...messages]);
+      setEventMessages(prev => [...prev, ...messages]);
     }
   };
 
@@ -156,13 +205,11 @@ function Day({ date, onEnd }) {
       </div>
 
       {/* Event messages */}
-      {eventMessages.length > 0 && (
-        <div className="event-messages" ref={eventRef}>
-          {eventMessages.map((message, index) => (
-            <p key={index}>{message}</p>
-          ))}
-        </div>
-      )}
+      <div className="event-messages" ref={eventRef} style={{opacity: eventMessages.length > 0 ? 1 : 0}}>
+        {eventMessages.map((message, index) => (
+          <p key={index}>{message}</p>
+        ))}
+      </div>
 
       {/* Filter buttons */}
       <div className="player-filters" ref={filterRef}>
@@ -252,7 +299,11 @@ function Day({ date, onEnd }) {
       <div className="day-controls" ref={dayRef}>
         <button
           className="next-phase-btn"
-          onClick={onEnd}
+          onClick={() => {
+            // Reset trạng thái phân phối tiền khi chuyển sang đêm
+            moneyDistributedRef.current = false;
+            onEnd();
+          }}
           disabled={showExecution}
         >
           Bắt đầu đêm {date + 1}
