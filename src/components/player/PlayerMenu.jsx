@@ -10,8 +10,8 @@ import Trade from './Trade';
 
 // Import assets
 import background from "../../assets/background_day.jpg";
-import ChaoHanh from "../../assets/shop/ChaoHanh.png";
-import HoiHuong from "../../assets/shop/GanhOanTroVe.png";
+import ChaoHanh from "../../assets/shop/ChaoHanh.jpg";
+import HoiHuong from "../../assets/shop/GanhOanTroVe.jpg";
 import GiaiAch from "../../assets/shop/GiaiAch.jpg";
 import MinhOan from "../../assets/shop/MinhOan.jpg";
 import Ruou from "../../assets/shop/RuouDe.jpg";

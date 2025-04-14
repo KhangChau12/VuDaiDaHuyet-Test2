@@ -4,6 +4,11 @@ import React, { useEffect, useState, useRef } from 'react'
 import "../../styles/home.css"
 import "../../styles/form.css"
 
+import QuyenThe from "../../assets/team/Logo phe Quyền Thế.svg";
+import CongLy from "../../assets/team/Logo phe Công Lý.svg";
+import DoiTao from "../../assets/team/Logo phe Đội Tảo.svg";
+import LangThang from "../../assets/team/Logo phe Lang Thang.svg";
+
 import background from "../../assets/background_day.jpg";
 import Card from '../player/Card';
 import PlayerMenu from '../player/PlayerMenu';
@@ -27,6 +32,13 @@ function Day({ date, onEnd }) {
   const [playerToSee, setPlayerToSee] = useState(null);
   const [showExecution, setShowExecution] = useState(false);
   const [eventMessages, setEventMessages] = useState([]);
+
+  const teamImage = {
+    'Quyền Thế': QuyenThe,
+    'Công Lý': CongLy,
+    'Đội Tảo': DoiTao,
+    'Lang Thang': LangThang
+  }
 
   // Kiểm tra điều kiện chiến thắng
   useEffect(() => {
@@ -193,7 +205,7 @@ function Day({ date, onEnd }) {
           Object.entries(groupedPlayers).map(([team, teamPlayers]) => (
             teamPlayers.length > 0 && (
               <div key={team} className="team-section">
-                <h3 className="team-title">{team}</h3>
+                <h3 className="team-title"><img src={teamImage[team]} alt={team} />{team}</h3>
                 <div id="player_list">
                   {teamPlayers.map((player) => (
                     <Card

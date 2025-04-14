@@ -277,11 +277,17 @@
 .team-title {
     color: var(--brown-text);
     text-align: left;
-    margin-left: 30px;
-    font-size: 20px;
+    font-size: 30px;
     border-bottom: 2px solid var(--brown-text-opacity);
     padding-bottom: 5px;
     margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.team-title img {
+    height: 60px;
+    width: 60px;
 }
 
 /* No players message */
