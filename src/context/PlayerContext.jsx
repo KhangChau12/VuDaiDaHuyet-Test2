@@ -120,7 +120,7 @@ function playerReducer(state, action) {
         ...state,
         players: state.players.map(player => 
           player.id === action.payload 
-            ? { ...player, drunk: true }
+            ? { ...player, drunk: true, wine: Math.min(player.wine + 1, 3) }
             : player
         )
       };

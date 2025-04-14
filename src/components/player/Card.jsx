@@ -29,7 +29,8 @@ function Card(props) {
   };
 
   return (
-    <div className={cardClasses} onClick={handleClick}>
+    <div className={cardClasses} style={{position: 'relative'}} onClick={handleClick}>
+      {player.wine > 0 && <div className='wine-overlay'></div>}
       <div className='background-card'>
         <img src={cardImage} alt={player.role} />
         {/* Hiển thị thẻ Say Rượu nếu người chơi đang say */}
@@ -49,8 +50,8 @@ function Card(props) {
             {player.frustration == 2 && (
               <span className="frustration-count"><img src={UatUc1} alt="UatUc2" /></span>
             )}
-            {player.drunk && (
-              <span className="drunk"><img src={SayRuou} alt="SayRuou" /></span>
+            {player.wine > 0 && (
+              <span className="drunk">{player.wine} <img src={SayRuou} alt="SayRuou" /></span>
             )}
           </span>
         </div>
