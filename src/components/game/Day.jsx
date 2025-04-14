@@ -62,6 +62,9 @@ function Day({ date, onEnd }) {
       title.style.marginTop = '-50%';
       title.style.opacity = '0';
       const event = eventRef.current;
+      if (event) {
+        event.style.opacity = '0';
+      }
 
       setTimeout(() => {
         title.style.display = 'none';
@@ -205,7 +208,7 @@ function Day({ date, onEnd }) {
       </div>
 
       {/* Event messages */}
-      {eventMessages.length > 0 && <div className="event-messages" ref={eventRef} style={{opacity: eventMessages.length > 0 ? 1 : 0}}>
+      {eventMessages.length > 0 && <div className="event-messages" ref={eventRef}>
         {eventMessages.map((message, index) => (
           <p key={index}>{message}</p>
         ))}
