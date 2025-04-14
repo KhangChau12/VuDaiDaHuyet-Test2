@@ -33,7 +33,7 @@ function Character(props) {
 
     const roleID = ['ba-kien', 'ly-cuong', 'ba-ba', 'doi-tao', 'lao-hac', 'thi-no', 'ong-giao', 'ba-co', 'binh-chuc', 'chi-pheo', 'nam-tho', 'tu-lang'];
     const roleIDVN = ['Bá Kiến', 'Lý Cường', 'Bà Ba', 'Đội Tảo', 'Lão Hạc', 'Thị Nở', 'Ông Giáo', 'Bà Cô của Thị Nở', 'Binh Chức', 'Chí Phèo', 'Năm Thọ', 'Tự Lãng'];
-    
+
     const checkCharacters = () => {
         gamePlayers = [];
         for (let i = 0; i < roleID.length + civilianCount; ++i) {
@@ -214,8 +214,8 @@ function Character(props) {
                     }
                 </div>
 
-                {/* Phe Đội Tảo */}
-                <h2>Phe Đội Tảo</h2>
+                {/* Những kẻ Lang Thang */}
+                <h2>Những kẻ Lang Thang</h2>
 
                 <div className={`container ${!enabledRoles["Đội Tảo"] && 'disabled'}`}>
                     <label>Đội Tảo:</label>
@@ -225,9 +225,6 @@ function Character(props) {
                         <button className="role-toggle" onClick={() => toggleRole("Đội Tảo")}>{enabledRoles["Đội Tảo"] ? 'Không sử dụng' : 'Sử dụng'}</button>
                     </div>
                 </div>
-
-                {/* Những kẻ Lang Thang */}
-                <h2>Những kẻ Lang Thang</h2>
 
                 <div className={`container ${!enabledRoles["Chí Phèo"] && 'disabled'}`}>
                     <label>Chí Phèo:</label>

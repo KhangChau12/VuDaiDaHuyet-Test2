@@ -6,7 +6,6 @@ import "../../styles/form.css"
 
 import QuyenThe from "../../assets/team/Logo phe Quyền Thế.svg";
 import CongLy from "../../assets/team/Logo phe Công Lý.svg";
-import DoiTao from "../../assets/team/Logo phe Đội Tảo.svg";
 import LangThang from "../../assets/team/Logo phe Lang Thang.svg";
 
 import background from "../../assets/background_day.jpg";
@@ -38,7 +37,6 @@ function Day({ date, onEnd }) {
   const teamImage = {
     'Quyền Thế': QuyenThe,
     'Công Lý': CongLy,
-    'Đội Tảo': DoiTao,
     'Lang Thang': LangThang
   }
 
@@ -145,8 +143,8 @@ function Day({ date, onEnd }) {
 
   // Function to filter players by team
   const getFilteredPlayers = () => {
-    if (filterTeam === 'all') return players.filter(p => p.alive);
-    return players.filter(player => player.team === filterTeam && player.alive);
+    if (filterTeam === 'all') return players;
+    return players.filter(player => player.team === filterTeam);
   };
 
   // Group players by team for better organization
@@ -154,12 +152,11 @@ function Day({ date, onEnd }) {
     const teams = {
       'Quyền Thế': [],
       'Công Lý': [],
-      'Đội Tảo': [],
       'Lang Thang': []
     };
 
     players.forEach(player => {
-      if (player.alive && teams[player.team]) {
+      if (teams[player.team]) {
         teams[player.team].push(player);
       }
     });
@@ -233,12 +230,6 @@ function Day({ date, onEnd }) {
           onClick={() => setFilterTeam('Công Lý')}
         >
           Phe Công Lý
-        </button>
-        <button
-          className={filterTeam === 'Đội Tảo' ? 'active' : ''}
-          onClick={() => setFilterTeam('Đội Tảo')}
-        >
-          Phe Đội Tảo
         </button>
         <button
           className={filterTeam === 'Lang Thang' ? 'active' : ''}
