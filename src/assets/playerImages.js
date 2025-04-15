@@ -2,6 +2,7 @@
 import baKien from './player/Bá Kiến.jpg';
 import lyCuong from './player/Lý Cường.jpg';
 import baBa from './player/Bà Ba.jpg';
+import caiLe from './player/Cai Lệ.jpg'; // Thêm import cho Cai Lệ
 import ongTuDam from './player/Lão Hạc.jpg';
 import thiNo from './player/Thị Nở.jpg';
 import anhHangXom from './player/Ông Giáo.jpg';
@@ -18,6 +19,7 @@ const playerImages = {
   'Bá Kiến': baKien,
   'Lý Cường': lyCuong,
   'Bà Ba': baBa,
+  'Cai Lệ': caiLe, // Thêm mapping cho Cai Lệ
   'Lão Hạc': ongTuDam,
   'Thị Nở': thiNo,
   'Ông Giáo': anhHangXom,

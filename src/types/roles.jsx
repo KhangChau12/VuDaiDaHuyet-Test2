@@ -21,7 +21,7 @@ class Player {
     }
 
     assignTeam(role) {
-        if (["Bá Kiến", "Lý Cường", "Bà Ba"].includes(role)) {
+        if (["Bá Kiến", "Lý Cường", "Bà Ba", "Cai Lệ"].includes(role)) { // Thêm Cai Lệ vào phe Quyền Thế
             return "Quyền Thế";
         } else if (
             [

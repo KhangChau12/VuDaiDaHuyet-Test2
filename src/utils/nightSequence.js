@@ -51,7 +51,8 @@ export const getNightActionPrompt = (role) => {
     'Binh Chức': 'Binh Chức, hãy nhớ rằng nếu bạn bị loại, bạn sẽ kéo theo một thành viên phe Quyền Thế gần nhất bên phải.',
     'Chí Phèo': 'Chí Phèo, bạn muốn tấn công ai đêm nay?',
     'Năm Thọ': 'Năm Thọ, bạn muốn cướp tiền của ai đêm nay?',
-    'Tự Lãng': 'Tự Lãng, bạn muốn bán rượu cho ai đêm nay?'
+    'Tự Lãng': 'Tự Lãng, bạn muốn bán rượu cho ai đêm nay?',
+    'Cai Lệ': 'Cai Lệ, bạn dậy cùng phe Quyền Thế.' // Thêm prompt cho Cai Lệ
   };
   
   return prompts[role] || `${role}, bạn muốn thực hiện hành động gì?`;
