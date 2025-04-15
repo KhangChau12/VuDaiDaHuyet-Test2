@@ -7,8 +7,10 @@ import { Player } from "../../types/roles";
 import background from "../../assets/image.jpg";
 
 function Character(props) {
-    // State to track civilian count
+    // State to track civilian count and Cai Lệ count
     const [civilianCount, setCivilianCount] = useState(1);
+    const [caiLeCount, setCaiLeCount] = useState(1); // Thêm state đếm số Cai Lệ
+    
     // State to track which roles are enabled
     const [enabledRoles, setEnabledRoles] = useState({
         // Phe Quyền Thế
@@ -32,33 +34,50 @@ function Character(props) {
 
     let gamePlayers = [];
 
-    // Thêm cai-le vào danh sách roleID
-    const roleID = ['ba-kien', 'ly-cuong', 'ba-ba', 'cai-le', 'doi-tao', 'lao-hac', 'thi-no', 'ong-giao', 'ba-co', 'binh-chuc', 'chi-pheo', 'nam-tho', 'tu-lang'];
-    const roleIDVN = ['Bá Kiến', 'Lý Cường', 'Bà Ba', 'Cai Lệ', 'Đội Tảo', 'Lão Hạc', 'Thị Nở', 'Ông Giáo', 'Bà Cô của Thị Nở', 'Binh Chức', 'Chí Phèo', 'Năm Thọ', 'Tự Lãng'];
+    // Danh sách ID và tên vai trò (không bao gồm Cai Lệ vì sẽ xử lý riêng)
+    const roleID = ['ba-kien', 'ly-cuong', 'ba-ba', 'doi-tao', 'lao-hac', 'thi-no', 'ong-giao', 'ba-co', 'binh-chuc', 'chi-pheo', 'nam-tho', 'tu-lang'];
+    const roleIDVN = ['Bá Kiến', 'Lý Cường', 'Bà Ba', 'Đội Tảo', 'Lão Hạc', 'Thị Nở', 'Ông Giáo', 'Bà Cô của Thị Nở', 'Binh Chức', 'Chí Phèo', 'Năm Thọ', 'Tự Lãng'];
 
     const checkCharacters = () => {
         gamePlayers = [];
-        for (let i = 0; i < roleID.length + civilianCount; ++i) {
-            if (i < civilianCount) {
-                let inp = document.getElementById(`civilian-${i}`);
+        
+        // Xử lý Dân thường
+        for (let i = 0; i < civilianCount; ++i) {
+            let inp = document.getElementById(`civilian-${i}`);
+            if (inp.value == "") {
+                return "Missing name";
+            }
+            gamePlayers.push(new Player(`civilian-${i}`, inp.value, "Dân thường"));
+        }
+        
+        // Xử lý Cai Lệ
+        for (let i = 0; i < caiLeCount; ++i) {
+            let inp = document.getElementById(`cai-le-${i}`);
+            if (inp.value == "") {
+                return "Missing name";
+            }
+            gamePlayers.push(new Player(`cai-le-${i}`, inp.value, "Cai Lệ"));
+        }
+        
+        // Xử lý các vai trò khác
+        for (let i = 0; i < roleID.length; ++i) {
+            let inp = document.getElementById(roleID[i]);
+            if (enabledRoles[roleIDVN[i]] && inp.value == "") {
+                return "Missing name";
+            }
+            if (enabledRoles[roleIDVN[i]]) {
                 if (inp.value == "") {
                     return "Missing name";
                 }
-                gamePlayers.push(new Player(`civilian-${i}`, inp.value, "Dân thường"));
-            } else {
-                let inp = document.getElementById(roleID[i - civilianCount]);
-                if (enabledRoles[roleIDVN[i - civilianCount]] && inp.value == "") {
-                    return "Missing name";
-                }
-                if (enabledRoles[roleIDVN[i - civilianCount]]) {
-                    if (inp.value == "") {
-                        return "Missing name";
-                    }
-                    gamePlayers.push(new Player(roleID[i - civilianCount], inp.value, roleIDVN[i - civilianCount]));
-                }
+                gamePlayers.push(new Player(roleID[i], inp.value, roleIDVN[i]));
             }
         }
-        return ((enabledRoles["Bá Kiến"] || enabledRoles["Lý Cường"] || enabledRoles["Bà Ba"] || enabledRoles["Cai Lệ"]) && (enabledRoles["Lão Hạc"] || enabledRoles["Thị Nở"] || enabledRoles["Ông Giáo"] || enabledRoles["Bà Cô của Thị Nở"] || enabledRoles["Binh Chức"] || civilianCount > 0) ? "Valid" : "Missing member");
+        
+        // Kiểm tra điều kiện: có ít nhất 1 người phe Quyền Thế và 1 người phe Công Lý
+        const hasQuyenThe = enabledRoles["Bá Kiến"] || enabledRoles["Lý Cường"] || enabledRoles["Bà Ba"] || (enabledRoles["Cai Lệ"] && caiLeCount > 0);
+        const hasCongLy = enabledRoles["Lão Hạc"] || enabledRoles["Thị Nở"] || enabledRoles["Ông Giáo"] || enabledRoles["Bà Cô của Thị Nở"] || enabledRoles["Binh Chức"] || civilianCount > 0;
+        
+        return (hasQuyenThe && hasCongLy) ? "Valid" : "Missing member";
     };
 
     // Function to toggle role usage
@@ -78,6 +97,18 @@ function Character(props) {
     const removeCivilian = () => {
         if (civilianCount > 0) {
             setCivilianCount(civilianCount - 1);
+        }
+    };
+    
+    // Function to add a Cai Lệ
+    const addCaiLe = () => {
+        setCaiLeCount(caiLeCount + 1);
+    };
+
+    // Function to remove a Cai Lệ
+    const removeCaiLe = () => {
+        if (caiLeCount > 0) {
+            setCaiLeCount(caiLeCount - 1);
         }
     };
 
@@ -140,14 +171,37 @@ function Character(props) {
                     </div>
                 </div>
 
-                {/* Thêm Cai Lệ */}
-                <div className={`container ${!enabledRoles["Cai Lệ"] && 'disabled'}`}>
-                    <label>Cai Lệ:</label>
-                    {enabledRoles["Cai Lệ"] && <input type="text" id="cai-le" placeholder="Nhập tên người chơi" />}
-                    {!enabledRoles["Cai Lệ"] && <div className="disabled-message">Vai trò này đã bị vô hiệu hóa</div>}
-                    <div className="button-container">
-                        <button className="role-toggle" onClick={() => toggleRole("Cai Lệ")}>{enabledRoles["Cai Lệ"] ? 'Không sử dụng' : 'Sử dụng'}</button>
+                {/* Cai Lệ (có thể thêm nhiều) */}
+                <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    width: '100%',
+                }}>
+                    <h3>Cai Lệ</h3>
+                    <div className="civilian-controls">
+                        <button className="civilian-btn add" onClick={addCaiLe}>+</button>
+                        <button className="civilian-btn remove" style={{marginTop: '-3px'}} onClick={removeCaiLe} disabled={caiLeCount < 1}>-</button>
                     </div>
+                </div>
+                
+                <div className="civilians-section">
+                    {enabledRoles["Cai Lệ"] && caiLeCount > 0 ? (
+                        Array.from({ length: caiLeCount }).map((_, index) => (
+                            <div className="container" key={`cai-le-${index}`}>
+                                <label>Cai Lệ {index + 1}:</label>
+                                <input type="text" id={`cai-le-${index}`} placeholder="Nhập tên người chơi" />
+                            </div>
+                        ))
+                    ) : (
+                        <div className="container disabled">
+                            <label>Cai Lệ:</label>
+                            <div className="disabled-message">Vai trò này đã bị vô hiệu hóa</div>
+                            <div className="button-container">
+                                <button className="role-toggle" onClick={() => toggleRole("Cai Lệ")}>{enabledRoles["Cai Lệ"] ? 'Không sử dụng' : 'Sử dụng'}</button>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* Phe Công Lý */}
