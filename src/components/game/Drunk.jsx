@@ -64,11 +64,10 @@ function Drunk({ onComplete }) {
           <>
             {drunkPlayers.length > 0 ? (
               <>
-                <p>Những người đang say rượu:</p>
+                <p style={{marginBottom: '10px'}}>Những người đang say rượu:</p>
                 <div className="drunk-players-list">
                   {drunkPlayers.map(player => (
                     <div key={player.id} className="drunk-player-item">
-                      <img src={Ruou} alt="Say rượu" className="drunk-icon" />
                       <span>{player.name} ({player.role})</span>
                     </div>
                   ))}

@@ -6,7 +6,6 @@ import "../../styles/form.css"
 
 import QuyenThe from "../../assets/team/Logo phe Quyền Thế.svg";
 import CongLy from "../../assets/team/Logo phe Công Lý.svg";
-import DoiTao from "../../assets/team/Logo phe Đội Tảo.svg";
 import LangThang from "../../assets/team/Logo phe Lang Thang.svg";
 
 import background from "../../assets/background_day.jpg";
@@ -40,7 +39,6 @@ function Day({ date, onEnd }) {
   const teamImage = {
     'Quyền Thế': QuyenThe,
     'Công Lý': CongLy,
-    'Đội Tảo': DoiTao,
     'Lang Thang': LangThang
   }
 
@@ -252,12 +250,6 @@ function Day({ date, onEnd }) {
           onClick={() => setFilterTeam('Công Lý')}
         >
           Phe Công Lý
-        </button>
-        <button
-          className={filterTeam === 'Đội Tảo' ? 'active' : ''}
-          onClick={() => setFilterTeam('Đội Tảo')}
-        >
-          Phe Đội Tảo
         </button>
         <button
           className={filterTeam === 'Lang Thang' ? 'active' : ''}
