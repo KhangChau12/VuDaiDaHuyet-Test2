@@ -178,7 +178,7 @@ function Character(props) {
                     alignItems: 'center',
                     width: '100%',
                 }}>
-                    <h3>Cai Lệ</h3>
+                    <h2>Cai Lệ</h2>
                     <div className="civilian-controls">
                         <button className="civilian-btn add" onClick={addCaiLe}>+</button>
                         <button className="civilian-btn remove" style={{marginTop: '-3px'}} onClick={removeCaiLe} disabled={caiLeCount < 1}>-</button>
