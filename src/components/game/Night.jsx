@@ -130,44 +130,68 @@ function Night({ date, onEnd }) {
     }
   };
   
+  // Cập nhật danh sách người bị đàn áp trong đêm
+  const addOppressionToNight = (playerId) => {
+    setOppressedInNight(prev => {
+      const newOppressed = {...prev};
+      newOppressed[playerId] = (newOppressed[playerId] || 0) + 1;
+      return newOppressed;
+    });
+  };
+  
   // Xử lý hiệu ứng cuối đêm
   const processEndOfNightEffects = () => {
     const newMessages = [];
     
-    // Tạo bản sao của danh sách người chơi để kiểm tra
-    const allPlayers = [...players];
-    
-    // Xử lý từng người trong danh sách có nguy cơ bị loại
-    playersToRemove.forEach(playerId => {
-      // Chỉ xem xét loại bỏ những người không được Lão Hạc bảo vệ
-      if (playerId !== protectedPlayerId) {
-        const player = allPlayers.find(p => p.id === playerId);
+    // Áp dụng điểm uất ức cho những người bị đàn áp mà không được Lão Hạc bảo vệ
+    Object.entries(oppressedInNight).forEach(([playerId, count]) => {
+      const player = players.find(p => p.id === playerId);
+      
+      if (player && player.alive) {
+        // Tăng điểm uất ức
+        increaseFrustration(playerId, count);
+        newMessages.push(`${player.name} tích lũy ${count} điểm uất ức do bị đàn áp.`);
         
-        // Kiểm tra lại xem người này có còn đủ điều kiện bị loại không
-        if (player && player.alive && player.frustration >= 2) {
-          if (player.role === 'Chí Phèo') {
-            // Chí Phèo chuyển sang phe Công Lý thay vì bị loại
-            changeTeam(playerId, 'Công Lý');
-            newMessages.push(`${player.name} (Chí Phèo) đã chuyển sang phe Công Lý do tích lũy 2 điểm uất ức!`);
-          } else if (player.role === 'Binh Chức') {
-            // Binh Chức kéo theo 1 thành viên phe Quyền Thế bên phải
-            removePlayer(playerId);
-            newMessages.push(`${player.name} (Binh Chức) đã rời khỏi làng do tích lũy 2 điểm uất ức.`);
-            
-            // Tìm thành viên phe Quyền Thế gần nhất bên phải
-            const powerThemeMembers = allPlayers.filter(p => p.team === 'Quyền Thế' && p.alive);
-            if (powerThemeMembers.length > 0) {
-              // TODO: Tìm thành viên phe Quyền Thế gần nhất bên phải
-              // (Giản lược ở đây, sẽ lấy thành viên đầu tiên)
-              const targetId = powerThemeMembers[0].id;
-              removePlayer(targetId);
-              newMessages.push(`${powerThemeMembers[0].name} (${powerThemeMembers[0].role}) cũng bị loại do hiệu ứng của Binh Chức.`);
-            }
-          } else {
-            // Người chơi thông thường rời làng
-            removePlayer(playerId);
-            newMessages.push(`${player.name} (${player.role}) đã rời khỏi làng do tích lũy 2 điểm uất ức.`);
+        // Kiểm tra nếu đủ 2 điểm uất ức
+        const updatedPlayer = {...player, frustration: player.frustration + count};
+        if (updatedPlayer.frustration >= 2) {
+          // Thêm vào danh sách cần xử lý
+          if (!playersToRemove.includes(playerId)) {
+            setPlayersToRemove(prev => [...prev, playerId]);
           }
+        }
+      }
+    });
+    
+    // Xử lý người chơi có đủ 2 điểm uất ức
+    const playersToHandle = [...playersToRemove];
+    playersToHandle.forEach(playerId => {
+      const player = players.find(p => p.id === playerId);
+      const updatedFrustration = player.frustration + (oppressedInNight[playerId] || 0);
+      
+      // Kiểm tra lại xem người này có còn đủ điều kiện bị loại không
+      if (player && player.alive && updatedFrustration >= 2) {
+        if (player.role === 'Chí Phèo') {
+          // Chí Phèo chuyển sang phe Công Lý thay vì bị loại
+          changeTeam(playerId, 'Công Lý');
+          newMessages.push(`${player.name} (Chí Phèo) đã chuyển sang phe Công Lý do tích lũy 2 điểm uất ức!`);
+        } else if (player.role === 'Binh Chức') {
+          // Binh Chức kéo theo thành viên phe Quyền Thế
+          removePlayer(playerId);
+          newMessages.push(`${player.name} (Binh Chức) đã rời khỏi làng do tích lũy 2 điểm uất ức.`);
+          
+          // Tìm thành viên phe Quyền Thế gần nhất bên phải
+          const powerThemeMembers = players.filter(p => p.team === 'Quyền Thế' && p.alive);
+          if (powerThemeMembers.length > 0) {
+            // Tìm thành viên phe Quyền Thế gần nhất bên phải
+            const targetId = powerThemeMembers[0].id; // Giản lược, lấy người đầu tiên
+            removePlayer(targetId);
+            newMessages.push(`${powerThemeMembers[0].name} (${powerThemeMembers[0].role}) cũng bị loại do hiệu ứng của Binh Chức.`);
+          }
+        } else {
+          // Người chơi thông thường rời làng
+          removePlayer(playerId);
+          newMessages.push(`${player.name} (${player.role}) đã rời khỏi làng do tích lũy 2 điểm uất ức.`);
         }
       }
     });
@@ -179,6 +203,7 @@ function Night({ date, onEnd }) {
     
     // Reset danh sách
     setPlayersToRemove([]);
+    setOppressedInNight({});
   };
   
   // Kiểm tra và cập nhật danh sách người chơi có thể bị loại
@@ -195,15 +220,6 @@ function Night({ date, onEnd }) {
       // Nếu điểm uất ức đã giảm dưới 2, loại khỏi danh sách
       setPlayersToRemove(prev => prev.filter(id => id !== playerId));
     }
-  };
-  
-  // Cập nhật danh sách người bị đàn áp trong đêm
-  const addOppressionToNight = (playerId) => {
-    setOppressedInNight(prev => {
-      const newOppressed = {...prev};
-      newOppressed[playerId] = (newOppressed[playerId] || 0) + 1;
-      return newOppressed;
-    });
   };
   
   // Xử lý hành động của nhân vật ngay khi nó xảy ra
@@ -228,9 +244,6 @@ function Night({ date, onEnd }) {
             // Số lần bị đàn áp
             const oppressedTimes = oppressedInNight[action.targetId];
             
-            // Hoàn tác toàn bộ điểm uất ức từ đàn áp trong đêm
-            decreaseFrustration(action.targetId, oppressedTimes);
-            
             // Xóa người này khỏi danh sách bị đàn áp
             setOppressedInNight(prev => {
               const newOppressed = {...prev};
@@ -239,9 +252,6 @@ function Night({ date, onEnd }) {
             });
             
             messages.push(`${targetPlayer.name} được Lão Hạc bảo vệ, đã tránh khỏi ${oppressedTimes} lần đàn áp đêm nay.`);
-            
-            // Kiểm tra lại xem người này có còn nằm trong danh sách cần xử lý không
-            checkAndUpdateRemovalList(action.targetId);
           } else {
             messages.push(`Lão Hạc đã bảo vệ ${targetPlayer?.name} khỏi bị đàn áp.`);
           }
@@ -253,16 +263,9 @@ function Night({ date, onEnd }) {
           const targetPlayer = players.find(p => p.id === action.targetId);
           
           if (targetPlayer) {
-            // Tăng điểm uất ức
-            increaseFrustration(action.targetId, 1);
-            
-            // Thêm vào danh sách bị đàn áp đêm nay
+            // Chỉ đánh dấu người bị đàn áp, không tăng điểm ngay
             addOppressionToNight(action.targetId);
-            
-            messages.push(`${targetPlayer.name} bị đàn áp bởi phe Quyền Thế và tăng 1 điểm uất ức.`);
-            
-            // Kiểm tra nếu người này đã tích lũy đủ 2 điểm uất ức
-            checkAndUpdateRemovalList(action.targetId);
+            messages.push(`${targetPlayer.name} bị đàn áp bởi phe Quyền Thế.`);
           }
         }
         break;
@@ -272,16 +275,9 @@ function Night({ date, onEnd }) {
           const targetPlayer = players.find(p => p.id === action.targetId);
           
           if (targetPlayer) {
-            // Tăng điểm uất ức
-            increaseFrustration(action.targetId, 1);
-            
-            // Thêm vào danh sách bị đàn áp đêm nay
+            // Chỉ đánh dấu người bị đàn áp, không tăng điểm ngay
             addOppressionToNight(action.targetId);
-            
-            messages.push(`${targetPlayer.name} bị đàn áp bởi Bá Kiến và tăng 1 điểm uất ức.`);
-            
-            // Kiểm tra nếu người này đã tích lũy đủ 2 điểm uất ức
-            checkAndUpdateRemovalList(action.targetId);
+            messages.push(`${targetPlayer.name} bị đàn áp bởi Bá Kiến.`);
           }
         }
         break;
