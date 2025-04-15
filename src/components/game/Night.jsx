@@ -467,11 +467,18 @@ function Night({ date, onEnd }) {
           {nightMessages.length > 0 && (
             <div className="night-messages">
               <h4>Tóm tắt sự kiện trong đêm:</h4>
-              <ul>
+              <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                width: '100%',
+                height: '300px',
+                overflowY: 'auto',
+                marginBottom: '20px'
+              }}>
                 {nightMessages.map((message, index) => (
-                  <li key={index}>{message}</li>
+                  <h3 key={index}>{message}</h3>
                 ))}
-              </ul>
+              </div>
             </div>
           )}
           
