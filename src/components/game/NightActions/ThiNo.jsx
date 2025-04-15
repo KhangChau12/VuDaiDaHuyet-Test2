@@ -67,7 +67,6 @@ function ThiNo({ onAction }) {
               onClick={() => handleSelect(player.id)}
             >
               {player.name} ({player.role}) 
-              {player.frustration > 0 ? ` - ${player.frustration} điểm uất ức` : ' - Không có điểm uất ức'}
               {player.id === previousTarget && player.role === 'Chí Phèo' && ' - Chọn lần 2 sẽ chuyển phe'}
             </div>
           ))}
