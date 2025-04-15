@@ -63,7 +63,6 @@ export const canBeTargetedBy = (targetPlayer, actingRole, actingPlayer, previous
   if (!targetPlayer.alive) return false;
   
   // Không thể nhắm mục tiêu vào chính mình (trừ một số trường hợp đặc biệt)
-  // CHỖ NÀY ĐÃ SỬA: Thêm Lão Hạc vào trường hợp có thể tự nhắm vào bản thân
   if (targetPlayer.id === actingPlayer.id && actingRole !== 'Chí Phèo' && actingRole !== 'Lão Hạc') return false;
   
   switch (actingRole) {
