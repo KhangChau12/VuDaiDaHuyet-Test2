@@ -15,12 +15,24 @@ export const processFrustrationEffects = (players, removePlayerFn, changeTeamFn)
     if (player.alive && player.frustration >= 2) {
       if (player.role === 'Chí Phèo') {
         // Chí Phèo chuyển sang phe Công Lý khi có 2 điểm uất ức
-        changeTeamFn(player.id, 'Công Lý');
-        results.push({
-          playerId: player.id,
-          action: 'change_team',
-          message: `${player.name} (Chí Phèo) đã chuyển sang phe Công Lý do tích lũy 2 điểm uất ức!`
-        });
+        if (player.team !== 'Công Lý') {
+          changeTeamFn(player.id, 'Công Lý');
+          // Reset điểm uất ức về 0 sau khi chuyển phe
+          player.frustration = 0;
+          results.push({
+            playerId: player.id,
+            action: 'change_team',
+            message: `${player.name} (Chí Phèo) đã chuyển sang phe Công Lý do tích lũy 2 điểm uất ức!`
+          });
+        } else {
+          // Nếu Chí Phèo đã thuộc phe Công Lý và bị uất ức 2 lần, sẽ bị đuổi như người chơi thường
+          removePlayerFn(player.id);
+          results.push({
+            playerId: player.id,
+            action: 'remove',
+            message: `${player.name} (Chí Phèo) đã rời khỏi làng do tích lũy 2 điểm uất ức!`
+          });
+        }
       } else if (player.role === 'Binh Chức') {
         // Binh Chức kéo theo 1 thành viên phe Quyền Thế bên phải
         results.push({

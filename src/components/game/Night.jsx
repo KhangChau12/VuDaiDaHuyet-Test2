@@ -173,8 +173,19 @@ function Night({ date, onEnd }) {
       if (player && player.alive && updatedFrustration >= 2) {
         if (player.role === 'Chí Phèo') {
           // Chí Phèo chuyển sang phe Công Lý thay vì bị loại
-          changeTeam(playerId, 'Công Lý');
-          newMessages.push(`${player.name} (Chí Phèo) đã chuyển sang phe Công Lý do tích lũy 2 điểm uất ức!`);
+          if (player.team !== 'Công Lý') {
+            changeTeam(playerId, 'Công Lý');
+            // Reset điểm uất ức về 0 sau khi chuyển phe
+            const chiPheo = players.find(p => p.id === playerId);
+            if (chiPheo) {
+              chiPheo.frustration = 0;
+            }
+            newMessages.push(`${player.name} (Chí Phèo) đã chuyển sang phe Công Lý do tích lũy 2 điểm uất ức!`);
+          } else {
+            // Nếu Chí Phèo đã thuộc phe Công Lý và bị 2 điểm uất ức, sẽ bị loại như người chơi thường
+            removePlayer(playerId);
+            newMessages.push(`${player.name} (Chí Phèo) đã rời khỏi làng do tích lũy 2 điểm uất ức!`);
+          }
         } else if (player.role === 'Binh Chức') {
           // Binh Chức kéo theo thành viên phe Quyền Thế
           removePlayer(playerId);
@@ -326,10 +337,34 @@ function Night({ date, onEnd }) {
             checkAndUpdateRemovalList(action.targetId);
           }
           
-          // Xử lý trường hợp Chí Phèo được Thị Nở giúp đỡ 2 lần liên tiếp
-          if (action.isSecondNight && targetPlayer && targetPlayer.role === 'Chí Phèo' && targetPlayer.team !== 'Công Lý') {
-            changeTeam(action.targetId, 'Công Lý');
-            messages.push(`${targetPlayer.name} (Chí Phèo) đã chuyển sang phe Công Lý do được Thị Nở giúp đỡ 2 đêm liên tiếp!`);
+          // Xử lý đặc biệt nếu là Chí Phèo
+          if (targetPlayer && targetPlayer.role === 'Chí Phèo' && targetPlayer.team !== 'Công Lý') {
+            // Tìm Chí Phèo để cập nhật biến đếm
+            const chiPheoPlayers = players.filter(p => p.role === 'Chí Phèo' && p.alive);
+            chiPheoPlayers.forEach(chiPheo => {
+              // Kiểm tra xem người được chọn có phải là Chí Phèo không
+              if (chiPheo.id === targetPlayer.id) {
+                // Tăng biến đếm số lần liên tiếp được chọn
+                chiPheo.chosenByThiNo = (chiPheo.chosenByThiNo || 0) + 1;
+                
+                // Nếu đã được chọn 2 lần liên tiếp và chưa thuộc phe Công Lý, chuyển phe
+                if (chiPheo.chosenByThiNo >= 2 && chiPheo.team !== 'Công Lý') {
+                  changeTeam(chiPheo.id, 'Công Lý');
+                  // Reset biến đếm
+                  chiPheo.chosenByThiNo = 0;
+                  messages.push(`${chiPheo.name} (Chí Phèo) đã chuyển sang phe Công Lý do được Thị Nở giúp đỡ 2 đêm liên tiếp!`);
+                }
+              } else {
+                // Nếu Thị Nở không chọn Chí Phèo này, reset biến đếm
+                chiPheo.chosenByThiNo = 0;
+              }
+            });
+          } else {
+            // Nếu Thị Nở không chọn Chí Phèo nào, reset biến đếm cho tất cả Chí Phèo
+            const chiPheoPlayers = players.filter(p => p.role === 'Chí Phèo' && p.alive);
+            chiPheoPlayers.forEach(chiPheo => {
+              chiPheo.chosenByThiNo = 0;
+            });
           }
         }
         break;

@@ -8,6 +8,7 @@ class Player {
         this.frustration = 0;
         this.wine = 0;
         this.chosen = 0; // Trường hợp Chí Phèo bị chọn 2 lần liền bởi Thị Nở
+        this.chosenByThiNo = 0; // Đếm số lần liên tiếp bị Thị Nở chọn
         this.items = {
             "Rượu Đế": 0,
             "Cháo Hành": 0,

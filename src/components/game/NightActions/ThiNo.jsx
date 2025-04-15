@@ -17,6 +17,10 @@ function ThiNo({ onAction }) {
     }
   }, []);
   
+  // Tìm Chí Phèo để kiểm tra số lần đã được chọn
+  const chiPheo = players.find(p => p.role === 'Chí Phèo' && p.alive);
+  const chiPheoChosenCount = chiPheo ? (chiPheo.chosenByThiNo || 0) : 0;
+  
   // Lọc ra những người chơi có thể được giúp đỡ (còn sống)
   const targetablePlayers = players.filter(
     player => player.alive
@@ -31,7 +35,7 @@ function ThiNo({ onAction }) {
       onAction({
         type: 'help',
         targetId: selectedPlayer,
-        isSecondNight: selectedPlayer === previousTarget && players.find(p => p.id === selectedPlayer)?.role === 'Chí Phèo'
+        isChiPheo: players.find(p => p.id === selectedPlayer)?.role === 'Chí Phèo'
       });
     } else {
       // Nếu không chọn ai, vẫn ghi nhận hành động bỏ qua
@@ -46,14 +50,12 @@ function ThiNo({ onAction }) {
       <h3>Thị Nở</h3>
       <p>Thị Nở, bạn muốn giúp ai giảm 1 điểm uất ức?</p>
       
-      {previousTarget && (
+      {chiPheo && chiPheo.team !== 'Công Lý' && (
         <div className="previous-action">
-          <p>Đêm trước bạn đã giúp: {players.find(p => p.id === previousTarget)?.name}</p>
-          {players.find(p => p.id === previousTarget)?.role === 'Chí Phèo' && (
-            <p className="special-note">
-              Nếu bạn chọn Chí Phèo 2 đêm liên tiếp, anh ta sẽ chuyển sang phe Công Lý.
-            </p>
-          )}
+          <p>Chí Phèo đã được chọn: {chiPheoChosenCount}/2 lần liên tiếp</p>
+          <p className="special-note">
+            Nếu bạn chọn Chí Phèo 2 đêm liên tiếp, anh ta sẽ chuyển sang phe Công Lý.
+          </p>
         </div>
       )}
       
@@ -63,11 +65,11 @@ function ThiNo({ onAction }) {
           {targetablePlayers.map(player => (
             <div 
               key={player.id}
-              className={`player-option ${selectedPlayer === player.id ? 'selected' : ''} ${player.id === previousTarget && player.role === 'Chí Phèo' ? 'special' : ''}`}
+              className={`player-option ${selectedPlayer === player.id ? 'selected' : ''} ${player.role === 'Chí Phèo' && player.team !== 'Công Lý' ? 'special' : ''}`}
               onClick={() => handleSelect(player.id)}
             >
               {player.name} ({player.role}) 
-              {player.id === previousTarget && player.role === 'Chí Phèo' && ' - Chọn lần 2 sẽ chuyển phe'}
+              {player.role === 'Chí Phèo' && player.team !== 'Công Lý' && chiPheoChosenCount === 1 && ' - Chọn sẽ chuyển phe'}
             </div>
           ))}
         </div>

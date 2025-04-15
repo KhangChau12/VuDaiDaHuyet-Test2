@@ -37,10 +37,16 @@ function ChiPheo({ onAction }) {
     player => player.alive && player.id !== chiPheo.id
   );
   
-  // Nếu thuộc phe Công Lý, chỉ có thể tấn công phe Quyền Thế
-  const justiceTargets = isJusticeTeam ? 
-    targetablePlayers.filter(player => player.team === 'Quyền Thế') : 
-    targetablePlayers;
+  // CÁC MỤC TIÊU CÓ THỂ TẤN CÔNG:
+  let validTargets = targetablePlayers;
+  
+  if (isJusticeTeam) {
+    // Nếu thuộc phe Công Lý, chỉ có thể tấn công phe Quyền Thế
+    validTargets = targetablePlayers.filter(player => player.team === 'Quyền Thế');
+  } else if (isPowerTeam) {
+    // Nếu thuộc phe Quyền Thế, không thể tấn công thành viên cùng phe
+    validTargets = targetablePlayers.filter(player => player.team !== 'Quyền Thế');
+  }
   
   const handleSelect = (playerId) => {
     setSelectedPlayer(playerId);
@@ -78,14 +84,14 @@ function ChiPheo({ onAction }) {
       )}
       
       {isPowerTeam && (
-        <p>Chí Phèo, bạn đang thuộc phe Quyền Thế. Bạn có thể tấn công một người chơi bất kỳ.</p>
+        <p>Chí Phèo, bạn đang thuộc phe Quyền Thế. Bạn có thể tấn công một người chơi không thuộc phe Quyền Thế.</p>
       )}
       
       {(isPowerTeam || isJusticeTeam) && (
         <div className="player-selection">
           <h4>Chọn người để tấn công:</h4>
           <div className="player-list">
-            {(isJusticeTeam ? justiceTargets : targetablePlayers).map(player => (
+            {validTargets.map(player => (
               <div 
                 key={player.id}
                 className={`player-option ${selectedPlayer === player.id ? 'selected' : ''}`}
